@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Error</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"
+	href="../../css/bootstrap.min.css" />
+</head>
+<body>
+	<div class="container">				
+		
+		<div th:text="${message}"></div>
+		<div>
+			${message}
+			StrackTrace
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+#welcome mail config
+welcome.from	=	test@ekaros.it
+welcome.subject	=	welcome
+welcome.url		=	http://95.110.224.34:8080/mail/welcome.mail
+#reset password mail config
+resetPsw.from	=	test@ekaros.it
+resetPsw.url	=	http://95.110.224.34:8080/mail/welcome.mail
+
+#smtp config
+smtp.url		=	smtp.gmail.com
+smtp.port		=	587
+smtp.user		=	sviluppo@ekaros.it	
+smtp.password	=	pippero123
+smtp.auth		=	true
+
+#index root for user's directory
+community.root	=	/usr/local/tomcatServices/data/community
+
+#index root for db's directory
+community.db.dialect= org.hibernate.dialect.H2Dialect
+community.db.url 	= jdbc:h2:file:/usr/local/tomcatServices/data/community;mode=db2
+community.db.driver = org.h2.Driver
+community.db.user 	= test
+community.db.psw 	= test
+
+community.db2.dialect= org.hibernate.dialect.H2Dialect
+community.db2.url 	= jdbc:h2:file:/usr/local/tomcatServices/data/community;mode=db2
+community.db2.driver = org.h2.Driver
+community.db2.user 	= test
+community.db2.psw 	= test
+
+
+community.db.create.url = jdbc:h2:file:/Users/max/Documents/data/community/db;mode=db2
+community.db.create.cmd = create database db

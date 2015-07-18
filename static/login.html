@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Community</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+	<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css" />
+	<link href="css/plugins/social-buttons/social-buttons.css" rel="stylesheet">
+	 <style>
+	 	a	
+	 		{
+	 		cursor:pointer;
+	 		}
+    	.macumba .panel-default>.panel-heading
+    		{
+    		height: 0;
+			padding: 0;
+			border: none;
+    		}
+    	.macumba .panel-body
+    		{
+    		margin-top: 50px;
+    		}
+    	.macumba .panel-title 
+    		{
+    		background-image: url(http://www.moriana.it/img/logologin.png);
+    		background-size: cover;
+			width: 95px;
+			height: 95px;
+			border-radius: 100px;
+			margin: auto;
+			color: transparent;
+			position: absolute;
+			left: 50%;
+			margin-left: -49px;
+			margin-top: -37px;
+			border: solid 3px white;
+			}
+		.macumba .btn-login ,.macumba .btn-register
+			{
+			background-color:#278fc6
+			}
+    </style>	
+</head>
+
+<body ng-app="ngAnimate" class="macumba">
+
+<script>
+
+function loginCtrl($scope)
+	{	
+	var act=$scope;
+	$scope.view=
+		{		
+		show:function()
+			{
+			if($community.user.logged) return "logged";
+			if(this.page!=null) return this.page;
+			
+			return "login";
+			},			
+		};
+	$scope.$watch("view.page",function(data)
+		{
+		if(data=="QR")
+			setTimeout(function()
+					{
+					$("#webcam").show();
+					$("video").css(
+							{
+							position:"absolute",
+							width:$("#qrpanel").width(),
+							height:$("#qrpanel").height(),
+							top:$("#qrpanel").offset().top,
+							left:$("#qrpanel").offset().left
+							});	
+					},1000);
+		else
+			$("#webcam").hide();
+		})
+	$scope.login=$community.login.basic;
+	$scope.facebook=$community.login.facebook;
+	$scope.twitter=$community.login.twitter;
+	$scope.randomPsw=true;
+	$scope.register=$community.register;
+	$scope.user = $community.user;
+	
+	$(document).on("community.register.waiting",function()
+		{
+		$scope.register.waiting=true;
+		})
+	$(document).on("community.register.done",function()
+		{		
+		$scope.register.waiting=false;
+		$scope.$apply();
+		})
+	$(document).on("community.logerror",function()
+		{
+		var anim="wobble";
+		$(".login-panel").parent().addClass(anim).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function()
+			{
+      		$(this).removeClass(anim);
+      		});
+		});
+	$(document).on("community.logged community.logout",function()
+		{				
+		$scope.$apply();
+		})
+	$(document).on("community.register",function()
+		{						
+		$scope.view.page="registered";
+		$scope.$apply();
+		})
+	}
+	
+</script>
+<style>
+.animated
+	{
+	position:relative;
+	width:100%;	
+	display:inline-block;
+    vertical-align:middle;
+    max-height: 99%;
+	overflow: auto;
+	}
+.ng-hide {
+  /* this is just another form of hiding an element */
+  display:block!important;
+  position:absolute;  
+  top:-9999px;
+  left:-9999px;
+}
+.animated.fading.ng-leave 
+	{
+    -webkit-animation-name: fadeOut;
+  	animation-name: fadeOut;
+	}
+.animated.fading.ng-enter 
+	{
+  	-webkit-animation-name: fadeIn;
+  	animation-name: fadeIn;
+	}
+.animated.bouncing.ng-leave 
+	{
+    -webkit-animation-name: bounceOut;
+  	animation-name: bounceOut;
+	}
+.animated.bouncing.ng-enter 
+	{
+  	-webkit-animation-name: bounceIn;
+  	animation-name: bounceIn;
+	}
+</style>
+
+    <div ng-class="{fadeOutUp:open,fadeInDown:!open}" class="container-fluid animated" ng-click="ope=!open" ng-controller="loginCtrl" style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;">
+        <div class="row" ng-switch="view.show()" style="height:100%	">
+        	<div class="col-md-4 col-md-offset-4" style="height:100%">
+        	           
+            
+            	<!--WELCOME-->
+	        	<div class="animated bouncing" ng-switch-when="logged">
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Hi {{user.firstName}}</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	<div class="form-group">
+	                        	<input class="form-control" placeholder="E-mail" ng-model="user.mail" type="email" autofocus>
+	                        </div>
+	                        <div class="form-group">
+	                        	<input class="form-control" placeholder="first Name" ng-model="user.firstName" type="name" autofocus>
+	                        </div>
+	                        <div class="form-group">
+	                        	<input class="form-control" placeholder="second Name" ng-model="user.secondName" type="name" autofocus>
+	                        </div>
+	                   	 <div class="form-group">
+	                        	<textarea ng-model="user.jsondata" style="width:100%; height:50px"></textarea>
+	                        </div>
+	                   		<div class="form-group">
+	                        Welcome {{user.firstName}}
+	                       	</div>
+	                       <a ng-click="user.save()" class="btn btn-lg btn-success btn-block">Save</a>	                       
+	                       <a ng-click="user.logout()" class="btn btn-lg btn-success btn-block">Logout</a>
+	                    </div>
+	                </div>
+	            </div>
+            	
+            	<!--REGISTERED-->
+	        	<div class="animated fading" ng-switch-when="registered">
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Send {{user.mail}}</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	<div class="form-group">
+	                       	We have sent you a mail..
+	                       	</div>
+	                       <a ng-click="view.page='login'" class="btn btn-lg btn-success btn-block">Login</a>
+	                    </div>
+	                </div>
+	            </div>
+            	
+            	<!--QR-->
+	        	<div class="animated fading" ng-switch-when="QR">
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Register</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	<div class="form-group" ng-show="register.waiting">
+	                    		Waiting please...
+	                    	</div>
+	                        <form role="form" action="/community/login" ng-hide="register.waiting">                        
+	                            <fieldset>
+	                                <div id="qrpanel">
+	                                    
+	                                </div>
+	                                
+	                                <hr>   
+	                                <div class="form-group text-center">
+	                                  <a ng-click="view.page='login'">Have you already an Account?<BR> access here!</a>
+	                                </div>  
+	                            </fieldset>
+	                        </form>
+	                        
+	                    </div>
+	                </div>
+	            </div>
+            	
+	        	<!--REGISTER-->
+	        	<div class="animated fading" ng-switch-when="register">
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Register</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	<div class="form-group" ng-show="register.waiting">
+	                    		Waiting please...
+	                    	</div>
+	                        <form role="form" action="/community/login" ng-hide="register.waiting">                        
+	                            <fieldset>
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="E-mail" ng-model="register.mail" type="email" autofocus>
+	                                </div>
+	                                <SPAN ng-hide="randomPsw">
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="Password" ng-model="register.psw" type="password">
+	                                </div>
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="Password" ng-model="register.psw2" type="password">
+	                                </div>
+	                                <div class="form-group">                       
+	                                	<a ng-click="randomPsw=true" class="btn btn-lg btn-success btn-block">Random password</a>
+	                                </div>
+	                                </SPAN>
+	                                <div class="form-group" ng-show="randomPsw">                       
+	                                	<a ng-click="randomPsw=false" class="btn btn-lg btn-success btn-block">Insert password</a>
+	                                </div>
+	                                <div class="form-group">                       
+	                                	<a ng-click="register.try()" class="btn btn-lg btn-success btn-block btn-register">Register</a>
+	                                </div>
+	                                <hr>   
+	                                <div class="form-group text-center">
+	                                  <a ng-click="view.page='login'">Have you already an Account?<BR> access here!</a>
+	                                </div>  
+	                            </fieldset>
+	                        </form>
+	                        
+	                    </div>
+	                </div>
+	            </div>
+	        	
+	        	<!--LOGIN-->
+	            <div class="animated fading" ng-switch-when="login">
+	            
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Please Sign In</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	
+	                                               
+	                            <fieldset>
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="E-mail" ng-model="login.mail" type="email" autofocus>
+	                                </div>
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="Password" ng-model="login.psw" type="password">
+	                                </div>
+	                                <!--div class="checkbox">
+	                                    <label>
+	                                        <input name="remember" type="checkbox" value="Remember Me">Remember Me
+	                                    </label>
+	                                </div-->
+	                                 
+	                                <div class="form-group text-center">                          
+	                                	<a ng-click="login.try()" class="btn btn-lg btn-success btn-block btn-login">Access</a>
+	                                </div>	                                
+	                                <div class="form-group">	                                	                           	                   
+	                                	<a ng-click="facebook.try()" class="btn btn-block btn-social btn-facebook"><I class="fa fa-facebook"></I> Sign in with Facebook</a>	                                		                                	
+	                                </div>	                                
+	                                <div class="form-group">	                                                         
+	                                	<a ng-click="twitter.try()" class="btn btn-social btn-block btn-twitter"><I class="fa fa-twitter"></I> Sign in with Twitter</a>
+	                                </div>
+	                                <div class="form-group">	                                                         
+	                                	<a ng-click="view.page='QR'" class="btn btn-social btn-block btn-google-plus"><I class="fa fa-qrcode"></I> Sign in with QR</a>
+	                                </div>
+	                                <div class="form-group text-center">
+	                                  <a ng-click="view.page='remember'">did you forget the password?</a>
+	                                </div>
+	                                <hr>   
+	                                <div class="form-group text-center">
+	                                  <a ng-click="view.page='register'">Haven't you an Account?<BR> subscribe here!</a>
+	                                </div>     
+	                                
+	                            </fieldset>
+	                        
+	                        
+	                    </div>
+	                </div>
+	            </div>
+	            
+            	<!--REMEMBER-->
+	            <div class="animated" ng-switch-when="remember">
+	                <div class="login-panel panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Remember</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                    	
+	                        <form role="form" action="/community/login">                        
+	                            <fieldset>
+	                                <div class="form-group">
+	                                    <input class="form-control" placeholder="E-mail" ng-model="login.mail" type="email" autofocus>
+	                                </div>            
+	                                <a ng-click="login.remember()" class="btn btn-lg btn-success btn-block">Invia</a>
+	                                <hr>   
+	                                <div class="form-group text-center">
+	                                  <a ng-click="view.page='login'">Have you already an Account?<BR> access here!</a>
+	                                </div>  
+	                            </fieldset>
+	                        </form>
+	                        
+	                    </div>
+	                </div>
+	            </div>
+            
+            </div>
+        </div>
+    </div>
+
+
+	<div id="webcam" style="display: none;">		
+		<canvas id="qr-canvas" width="800" height="600"></canvas>								
+		<div id="outdiv"><video id="v" autoplay></video></div>
+	</div>
+    <!-- Core Scripts - Include with every page -->
+    <script src="js/jquery-1.10.2.js"></script>
+    
+     <script src="js/angular.min.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.14/angular-animate.js"></script>
+  
+    <script src="js/community.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+	<script src="plugins/qrcam/llqrcode.js"></script>
+	<script src="plugins/qrcam/webqr.js"></script>
+    <!-- SB Admin Scripts - Include with every page -->
+    <script src="js/sb-admin.js"></script>
+<script>
+ var myApp = angular.module('MyApp', ['ngAnimate']);
+ 
+ setwebcam(function(a)
+			{
+			alert(a);
+			});
+ </script>
+ <style>
+ #qrpanel
+ 	{
+ 	width: 100%;
+	height: 200px;
+	border: solid 1px silver;	
+ 	}
+ #qr-canvas
+ 	{
+ 	display:none
+ 	}
+ #webcam
+	{
+	display: block;
+	//position: absolute;
+	//left: 398px;
+	//top: 311px;
+	z-index: 10000000000;
+	width: 220px;
+	height: 202px;
+	}
+ </style>
+</body>
+
+</html>

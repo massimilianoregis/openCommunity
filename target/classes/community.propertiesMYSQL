@@ -1,0 +1,26 @@
+#welcome mail config
+welcome.from	=	test@ekaros.it
+welcome.subject	=	welcome
+welcome.url		=	http://localhost:8080/mail/welcome.mail
+#reset password mail config
+resetPsw.from	=	test@ekaros.it
+resetPsw.url	=	http://localhost:8080/mail/welcome.mail
+
+#smtp config
+smtp.url		=	smtp.gmail.com
+smtp.port		=	587
+smtp.user		=	massimiliano.regis@gmail.com
+smtp.password	=	2c0d2r02
+smtp.auth		=	true
+
+#community root for user's directory
+community.root	=	/Users/max/Documents/data/community
+
+#community root for db's directory
+community.db.dialect= org.hibernate.dialect.MySQL5Dialect
+community.db.url 	= jdbc:mysql://localhost:3306/landcycle
+community.db.driver = com.mysql.jdbc.Driver
+community.db.user 	= root
+community.db.psw 	= root
+community.db.create.url = jdbc:mysql://localhost:3306
+community.db.create.cmd = create database pippero

@@ -1,0 +1,26 @@
+#welcome mail config
+welcome.from	=	test@ekaros.it
+welcome.subject	=	welcome
+welcome.url		=	http://localhost:8080/mail/welcome.mail
+#reset password mail config
+resetPsw.from	=	test@ekaros.it
+resetPsw.url	=	http://localhost:8080/mail/welcome.mail
+
+#smtp config
+smtp.url		=	smtp.gmail.com
+smtp.port		=	587
+smtp.user		=	massimiliano.regis@gmail.com
+smtp.password	=	2c0d2r02
+smtp.auth		=	true
+
+#index root for user's directory
+index.root	=	/Users/max/Documents/data/index
+
+#index root for db's directory
+index.db.dialect= org.hibernate.dialect.H2Dialect
+index.db.url 	= jdbc:h2:file:/Users/max/Documents/data/index/pippero;mode=db2
+index.db.driver = org.h2.Driver
+index.db.user 	= test
+index.db.psw 	= test
+index.db.create.url = jdbc:h2:file:/Users/max/Documents/data/index/pippero;mode=db2
+index.db.create.cmd = create database pippero

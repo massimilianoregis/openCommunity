@@ -1,0 +1,123 @@
+ <script>
+
+function propertiesCtrl($scope)
+	{
+	$.get("/community/admin/list",function(data)
+		{
+		$scope.communities=data;
+		for(var d in data)
+			{
+			data[d].descr = data[d].name;
+			if(data[d].descr=="") data[d].descr="Master"
+			}		
+		$scope.$apply();
+		});
+	/*$.get("/community/list",function(data)
+		{		
+		$scope.list=data;			
+		for(var d in data)
+			{
+			data[d].open=function()
+				{				
+				window["user"]=this;
+				document.location.href="#user""+this.mail;
+				}
+			}
+		$scope.$apply();
+		})*/	
+	$scope.community=
+		{
+		name:"",
+		change:function()
+			{						
+			$.get("/community/list",{realm:this.name},function(data)
+				{
+				for(var d in data)
+					{
+					data[d].open=function()
+						{
+						window["user"]=this;
+						document.location.href="#user/"+this.mail;
+						}
+					}		
+				$scope.list=data;		
+				
+				$scope.$apply();
+				})	
+			}
+		}
+	$scope.community.change();
+	}
+</script>
+<div ng-controller="propertiesCtrl">
+			 <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Users</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-6">
+                	<div class="form-group">
+                		<A href="#user" class="button">Add</A>
+                	</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                	<div class="form-group">
+                		<select class="form-control" ng-model="community.name" ng-change="community.change()">
+                			<option ng-repeat="community in communities" value="{{community.name}}">{{community.descr}}</option>
+                		</select>
+                	</div>
+                </div>
+            </div>            
+             <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Users
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>                                            
+                                            <th>Mail</th>
+                                            <th>Name</th>  
+                                            <th>Roles</th>
+                                            <th>Icons</th>                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="cursor:pointer;" ng-repeat="item in list" ng-click="item.open()">                                            
+                                            <td>{{item.mail}}</td>
+                                            <td>{{item.firstName}} {{item.secondName}}</td>
+                                            <td>
+                                            	<table>
+                                            	<tr ng-repeat="role in item.roles">
+                                            		<td>{{role.company}}/{{role.name}}</td>                                            		
+                                            	</tr>
+                                            	</table>
+                                            </td>
+                                            <td>
+                                            	<I class="fa fa-user"></I>
+                                            	<I class="fa fa-bullhorn"></I>
+                                            </td>                                            
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+            <!-- /.row -->
+            </div>
+</div>

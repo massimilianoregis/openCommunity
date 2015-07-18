@@ -1,0 +1,941 @@
+
+<STYLE>
+.button.error
+	{
+	position: absolute;
+bottom: -20px;
+height: 20px;
+width: 220px;
+	}
+.loading_wall
+	{
+	display:none;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0,0,0,.2);
+	z-index: 1;
+	}
+.sheet .loading	
+	{
+	background-image: url('http://www.macumba.eu/img/ajax-loader.gif');
+	background-position: -10px;
+	background-repeat: no-repeat;
+	position:relative;
+	height: 13px;
+	width: 260px;
+	background-size: 279px 21px;
+	display:none;
+	}
+#community	.close
+	{
+	position: absolute;
+	right: -33px;
+	top: -33px;
+	border: solid 1px rgba(255,255,255,.7);
+	width: 30px;
+	height: 30px;
+	border-radius: 50px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 22px;
+	color: rgba(255,255,255,.6);
+	margin-left: 119px;
+	}
+#v
+	{
+	width:220px;
+	height:200px;
+	}
+#qr-canvas 
+	{
+	display: none;
+	}
+#webcam
+	{
+	display: block;
+	position: absolute;
+	left: 398px;
+	top: 311px;
+	z-index: 10000000000;
+	width: 220px;
+	height: 202px;
+	}
+#outdiv 
+	{
+	
+	}	
+
+form.box .row input[type=text], form.box .row input[type=password] 
+	{
+	box-sizing: border-box;
+	}
+
+/*--BOX*/
+
+
+form.box
+	{
+	padding: 20px;
+	width: 260px;	
+	position:relative;		
+	background-color: white;
+	border-radius: 2px;
+	z-index: 10000000;
+	padding-bottom:10px;
+	padding-top: 65px;
+	font-family: helvetica;
+	box-sizing: border-box;	
+	}
+	
+form.box .logo 
+	{
+	background-image: url(img/logologin.png);
+	background-repeat: no-repeat;
+	position: absolute;
+	top: -45px;
+	height:95px;
+	width:95px;
+	left: 35%;
+	z-index:1;
+	}
+/*--/BOX*/
+
+/*--ROW*/
+form.box .row
+	{
+	width: 100%;
+	padding:0;
+	padding-left: 0;
+	padding-right: 0;
+	clear: both;
+	color:gray;
+	position:relative;
+	}
+form.box .row label
+	{
+	display: none;
+	}
+form.box .row input[type=checkbox]
+	{
+	float: left;
+	margin-right: 10px;
+	margin-left: 0;
+	}
+form.box .row input[type=text],form.box .row input[type=password]
+	{
+	font: inherit;
+	margin: 0;
+	padding: 2px 0.3em;
+	width: 100%;
+	margin-left: 0px;
+	height: 33px;
+	margin-bottom: 5px;
+	border-radius: 3px;
+	border: solid 1px silver;
+	font-size: 14px;
+	}
+/*--/ROW*/
+
+
+/*--BUTTON*/
+
+form.box .button
+	{
+	text-decoration:none;
+	color:white;
+	}
+form.box .button > div 
+	{
+	margin-bottom: 10px;
+	width: 100%;
+	left: 26px;
+	text-align: center;
+	height: 40px;
+	border-radius: 3px;
+	line-height: 40px;
+	background-color: silver;
+	text-decoration: none;
+	margin-top: 10px;
+	}
+/*--/BUTTON*/
+form.box  .button.register > div
+	{
+	background-color:#278fc6;
+	}
+form.box .button.fb > div
+	{
+	background:#3c5a9a;
+	
+	background-repeat: no-repeat;
+	background-position:12px 8px;
+	}
+
+form.box .button.qr > div
+	{
+	background:brown;
+	
+	background-repeat: no-repeat;
+	background-position:12px 8px;
+	}
+form.box .button.login > div
+	{
+	background:darkgreen;
+	
+	background-repeat: no-repeat;
+	background-position:12px 8px;
+	}
+	
+	
+/*--BANDA*/
+form.box .banda 
+	{
+	background: #ECECEC;
+	margin-left: -20px;
+	margin-right: -20px;
+	min-height: 20px;
+	text-align: center;
+	width: initial;
+	border-top: solid 1px silver;
+	border-bottom: solid 1px silver;
+	margin-bottom: 20px;
+	font-size:12px;
+	}
+/*--BANDA*/
+/* COLORI DI CAMPO OBBLIGATORIO per mail e psw
+	background-color:#fad2d3;
+	color:#ee353b;
+	border:solid 1px #ee353b;
+*/
+
+form.box .banda.card
+	{
+	margin-top: 20px;
+	background-color:#deeff7;
+	color:#1e9ad0;
+	border-top:solid 1px #1e9ad0;
+	border-bottom:solid 1px #1e9ad0;
+	height: 50px;
+	padding-left: 0;
+	width: initial;
+	text-align: center;
+	font-size: 12px;
+	vertical-align: bottom;
+	
+	background-repeat: no-repeat;
+	background-position: 137px 3px;
+	line-height: 71px;
+	}
+form.box .banda.card a
+	{
+	color: #1e9ad0;
+	}
+form.box .banda.account 
+	{
+	color: black;
+	border: solid 1px white;
+	text-align: center;
+	font-size: 12px;
+	margin-bottom: 3px;
+	background: white;
+	}
+form.box .banda.account a
+	{
+	color:black;
+	}
+form.box .button.attivita 
+	{	
+	position: absolute;
+	left: 0;
+	bottom: -55px;
+	top:initial;
+	}
+form.box .button.attivita > div
+	{
+	background-color: #343434;
+	line-height: 25px;
+	vertical-align: middle;
+	border: solid 1px white;
+	margin-left: 20px;
+	margin-right: 20px;
+	width: initial;
+	font-size: 12px;
+	height: 25px;
+	}
+form.box a
+	{
+	text-decoration:underline;
+	cursor:pointer;
+	} 
+
+form.box .row.p 
+	{
+	font-size: 12px;
+	line-height: 14px;
+	text-align: center;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	}
+form.box .termini
+	{
+	font-size:10px;
+	}
+/*
+#community
+	{		
+	position: fixed;	
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	z-index:100000000;	
+	display:block;
+	bottom:100%;	
+	}*/
+#community .sheet
+	{
+	display:none;
+	position:absolute;
+	left:50%;
+	
+	margin-left: -130px;
+	}
+form.box .data input
+	{
+	width:100px;	
+	}
+form.box .data
+	{
+	float: left;
+	width: 67px;
+	margin-right: 9px;
+	clear: initial;
+	}
+form.box .data.anno
+	{
+	margin-right: 0;	
+	}
+@keyframes down
+	{
+	from {bottom: 100%;}
+	to {bottom: 0;}
+	}
+@-webkit-keyframes down
+	{
+	from {bottom: 100%;}
+	to {bottom: 0;}
+	}
+@keyframes up
+	{
+	to {bottom: 100%;}
+	from {bottom: 0;}
+	}
+@-webkit-keyframes up
+	{
+	to {bottom: 100%;}
+	from {bottom: 0;}
+	}
+@keyframes show
+	{
+	from {opacity: 0;}
+	to {opacity: 1;}
+	}
+@-webkit-keyframes show
+	{
+	from {opacity: 0;}
+	to {opacity: 1;}
+	}
+@keyframes hide
+	{
+	to {opacity: 0;}
+	from {opacity: 1;}
+	}
+@-webkit-keyframes hide
+	{
+	to {opacity: 0;}
+	from {opacity: 1;}
+	}
+	
+
+#login form.box
+	{
+	//height: 380px;	
+	
+	}
+#register form.box
+	{
+	//height: 292px;	
+	top:initial;
+	
+	}
+#userData form.box
+	{
+	height:391px;
+	
+	top:initial;
+	margin-bottom: 111px;
+	}
+#userData .qr
+	{
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	background-color: white;
+	}
+
+
+	
+#community.show
+	{
+	animation: down 2s;
+	-webkit-animation:down 2s;		
+	-webkit-animation-fill-mode: forwards;
+	}
+
+#community.hide
+	{
+	animation: up 1s;
+	-webkit-animation:up 1s;			
+	-webkit-animation-fill-mode: forwards;
+	}
+.blur	
+	{
+	-webkit-filter:grayscale(1);
+	margin-top:14px;
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	}
+.opa{
+	background: rgba(0,0,0,.7);
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index:1000;
+	}
+
+#community .wall
+	{
+	display: block;
+	opacity: 1;
+	position: fixed;	
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 100%;
+	z-index: 100000;
+	background: rgba(0,0,0,.7);
+	-webkit-transition-duration:2s;
+	-webkit-transform: translateZ(0);
+	}
+	
+.community	
+ 	{
+	color: silver;
+	position: absolute;
+	right: 100px;
+	top: 12px;
+	background-color: rgba(0,0,0,.7);
+	margin-top: -6px;
+	z-index: 1000000;
+	}
+.community  div
+	{
+	border: solid 1px white;
+	border-radius: 3px;
+	padding: 4px;
+	float: left;
+	margin:5px;
+	}
+
+
+form.box .row.genere label 
+	{
+	display: block;
+	text-align: left;
+	width: 83px;
+	float:right;
+	}
+form.box .option 
+	{
+	width: 104px;
+	float: left;
+	line-height: 21px;
+	text-align: left;
+	}
+form.box .tooltip
+	{
+	position: absolute;
+	left: 0;
+	top: 0;
+	border: solid 1px red;
+	background-color: rgb(244,213,212);
+	right: 0;
+	bottom: 5px;
+	border-radius: 2px;
+	text-align: left;
+	color: red;
+	line-height: 33px;
+	padding-left: 8px;
+	overflow:hidden;
+	display:none;
+	}
+form.box.submitted .tooltip
+	{
+	display:block;
+	}
+#userData .box
+	{
+	display:none;
+	}
+</STYLE>
+
+<SCRIPT>
+
+</SCRIPT>
+<STYLE>
+	.loading
+		{
+		display:none;
+			position: absolute;
+	    left: 0;
+	    top: 0;
+	    bottom: 0;
+	    right: 0;
+	    background-color: rgba(0,0,0,.6);
+	    z-index: 100000;
+		}
+	.waiting{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;background-color: #45CEEF; 
+    -webkit-animation: pulse 40s infinite alternate;
+    border: solid 1px black;
+	border-left: 0;
+	border-right: 0;
+    }
+	@-webkit-keyframes pulse { 0% {background-color: #45CEEF;} 25% {background-color: #FFF5A5;} 50% {background-color: #FFD4DA;} 75% {background-color: #99D2E4;} 100% {background-color: #D8CAB4;} }
+	
+</STYLE>
+<STYLE>
+			#community #userData
+				{
+				position: absolute;
+				left: 10px;
+				margin-left: 0;
+				height: 800px;
+				width: 90%;
+				}
+			#userData UL.menu
+				{
+				position: absolute;
+				left: 0;
+				top: 0;
+				padding: 20px;
+				color: white;
+				width: 140px;
+				}
+			
+			#userData UL.menu LI.active,#userData UL.menu LI:hover	
+				{
+				background: rgba(255,255,255,.8);
+				}
+			#userData UL.menu LI.active h2,#userData UL.menu LI:hover h2	
+				{
+				color:black;
+				}
+			#userData UL.menu LI.active a,#userData UL.menu LI:hover a		
+				{
+				color:black;
+				}
+			#userData .orders ul 
+				{
+				color: black;
+				}
+			#userData .orders li 
+				{
+				position: relative;
+				
+				border-bottom: solid 1px silver;
+				line-height: 32px;
+				}
+			#userData .orders li.title
+				{
+				height: 32px;				
+				}
+			#userData .orders li .rows 
+				{
+				padding-left: 24px;
+				font-size: 10px;
+				}
+			#userData .orders li .date
+				{
+				margin-left: 12px;
+				}
+			#userData .orders li .total 
+				{
+				position: absolute;
+				left: 424px;
+				top: 0;
+				width: 62px;
+				text-align: right;
+				}
+			#userData .orders UL.rows
+				{			
+				height:0;	
+				overflow: hidden;
+				-webkit-transition-duration:2s;
+				}
+			#userData UL.menu LI
+				{
+				height: 31px;
+				color: white;
+				border-bottom: solid 1px silver;
+				padding-top: 17px;
+				padding-left: 12px;
+				-webkit-transition-duration:2s;
+				}				
+			#userData UL.menu LI a
+				{
+				color:white;
+				-webkit-transition-duration:2s;
+				}	
+			#userData UL.menu h2
+				{
+				font-size: 18px;
+				-webkit-transition-duration:2s;
+				}
+			#userData li i 
+				{
+				margin-right: 10px;
+				}
+			#userData .box 
+				{								
+				border-radius: 4px;
+				padding: 20px;
+				color: white;
+				background-color: rgba(255,255,255,.8);
+				z-index: 1000000;
+				position: absolute;
+				left: 160px;
+				right: 10px;
+				top: 10px;
+				bottom: 10px;
+				}
+			#userData .picture
+				{
+				background-color: white;
+				float: left;
+				margin-right: 20px;
+				margin-bottom: 20px;
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				width: 150px;
+				height: 150px;
+				background-image: url('http://png-1.findicons.com/files/icons/1072/face_avatars/300/i04.png');
+				background-size: contain;
+				border: solid 1px black;
+				border-radius:8px;
+				}
+			#userData .data 
+				{
+				height: 42px;
+				border-bottom: solid 1px rgba(0,0,0,.2);
+				line-height: 42px;
+				vertical-align: bottom;
+				color: black;
+				font-size: 15px;
+				padding-left: 16px;
+				}
+			#userData .orders .iter b	
+				{
+				float:left;
+				}
+			#userData .orders .iter .step.pagato
+				{
+				background:darkred;
+				color:white;				
+				}
+			#userData .orders .iter .step.spedito
+				{
+				background: gold;
+				color: black;				
+				}
+			#userData .orders .iter .step.consegnato
+				{
+				background:green;
+				color:white;
+				}
+			#userData .orders .iter .step
+				{
+				color:silver;
+				border: solid 1px silver;
+				border-radius: 4px;
+				padding: 2px;
+				background-color: white;
+				height: 15px;
+				line-height: 15px;
+				float: left;
+				margin-right: 2px;
+				margin-left: 2px;
+				width: 70px;
+				text-align: center;
+				}
+			#userData .orders .iter > .step[active=true]
+				{
+				color:black;
+				border-color:black;
+				}
+			#userData .orders .iter	
+				{
+				position: absolute;
+				left: 177px;
+				height: 15px;
+				line-height: 22px;				
+				top: 6px;
+				}
+			.row.qr
+				{
+				height: 203px;
+				border: solid 1px silver;
+				border-radius: 4px;
+				margin-bottom: 15px;
+				}
+	
+		#userData .qrhelparrow
+			{
+			width: 0;
+			height: 0;
+			border-top: 60px solid transparent;
+			border-bottom: 60px solid transparent;
+			border-left: 60px solid rgba(0,0,0,.3);
+			position: absolute;
+			bottom: 28px;
+			right: 161px;
+			}
+		#userData .qrhelp
+			{
+			height: 85px;
+			position: absolute;
+			bottom: 28px;
+			width: 130px;
+			right: 221px;
+			color: black;
+			background-color: rgba(0,0,0,.3);
+			padding: 23px;
+			color: white;
+			font-size: 15px;
+			text-align: right;
+			padding-top: 12px;
+			vertical-align: middle;
+			line-height: 19px;
+			}
+		#userData LI .importo
+			{
+			position: absolute;
+			left: 423px;
+			}
+	</STYLE>
+
+<DIV>
+<div id="webcam" style="display: none;">		
+		<canvas id="qr-canvas" width="800" height="600"></canvas>								
+		<div id="outdiv"><video id="v" autoplay></video></div>
+</div>
+	
+<!--DIV CLASS="community">
+	<SPAN data-bind="invisible:user.name">
+		<DIV onclick="$m.community.login.show()">Login</DIV>
+		<DIV onclick="$m.community.register.show()">Register</DIV>
+	</SPAN>
+	<DIV data-bind="visible:user.name,text:user.name" onclick="$m.community.user.show()"></DIV>
+</DIV-->
+
+<DIV ID="community">
+	<div class="wall" ONCLICK="$m.community.hide();">
+	
+	<DIV ID="login" CLASS="sheet">
+	<div class="loading"></div>
+	<FORM CLASS="box" action="\\#" ONSUBMIT="$m.community.login.try(); return false;">
+		<DIV CLASS="loading_wall"></DIV>
+		<DIV CLASS="close" ONCLICK="$m.community.hide()">X</DIV>		
+		<DIV CLASS="logo"></DIV>				
+		<DIV CLASS="row"><LABEL>Mail</LABEL><INPUT TYPE="text" PLACEHOLDER="Indirizzo mail" data-bind="value:user.mail"></DIV>
+		<DIV CLASS="row"><LABEL>Password</LABEL><INPUT TYPE="password" PLACEHOLDER="Password" data-bind="value:user.password"></DIV>		
+		<DIV CLASS="row" STYLE="display:none"><LABEL>Password</LABEL><INPUT TYPE="submit"></DIV>		
+		<A HREF="" CLASS="row button register" onclick="$('\\#login FORM.box').submit(); return false;"><DIV>ACCEDI</DIV></A>
+		<DIV CLASS="row p"><a data-bind="click:remember.show">Hai dimenticato la password?</a></DIV>
+		<DIV CLASS="row p">oppure</DIV>
+		<A data-bind="visible:facebook.active" ONCLICK="$m.community.facebook.try()" CLASS="button fb"><DIV>Accedi tramite Facebook</DIV></A>
+		<A ONCLICK="$m.community.QR.show()" CLASS="button qr"><DIV>Accedi tramite QR</DIV></A>		
+		<DIV CLASS="row banda account"><DIV CLASS="testo">Non Hai un account?<A  data-bind="click:register.show"> Iscriviti qui!</A></DIV></DIV>		
+		<A HREF="" CLASS="button error" data-bind="visible:login.error"><DIV data-bind="text:login.error">Login o password non valida!</DIV></A>		
+	</FORM>
+	</DIV>
+	
+	<DIV ID="qr" CLASS="sheet">
+	<FORM CLASS="box" action="\\#" ONSUBMIT="$m.community.login.try(); return false;">
+		<DIV CLASS="close" ONCLICK="$m.community.hide()">X</DIV>
+		<DIV CLASS="logo"></DIV>				
+				
+		<DIV CLASS="row qr">
+			
+			
+		</DIV>		
+		<A ONCLICK="$m.community.facebook.try()" CLASS="button fb"><DIV>Accedi tramite Facebook</DIV></A>
+		<A ONCLICK="$m.community.login.show()" CLASS="button login"><DIV>Accedi tramite User/Password</DIV></A>	
+		<DIV CLASS="row banda account"><DIV CLASS="testo">Non Hai un account?<A  data-bind="click:register.show"> Iscriviti qui!</A></DIV></DIV>					
+	</FORM>
+	</DIV>
+	
+	<DIV ID="remember" CLASS="sheet">
+	<FORM CLASS="box" action="\\#" ONSUBMIT="$m.community.login.try(); return false;">
+		<DIV CLASS="close" ONCLICK="$m.community.hide()">X</DIV>
+		<DIV CLASS="logo"></DIV>				
+		<DIV CLASS="row"><LABEL>Mail</LABEL><INPUT TYPE="text" PLACEHOLDER="Indirizzo mail" data-bind="value:user.mail"></DIV>
+		<DIV CLASS="row" STYLE="display:none"><LABEL>Password</LABEL><INPUT TYPE="submit"></DIV>		
+		<A HREF="" CLASS="row button register" onclick="$('\\#login FORM.box').submit(); return false;"><DIV>INVIA</DIV></A>		
+		<DIV CLASS="row banda account"><DIV CLASS="testo">Non Hai un account?<A  data-bind="click:register.show"> Iscriviti qui!</A></DIV></DIV>
+		<DIV CLASS="row banda account"><DIV CLASS="testo">Hai giÌ  un account?<A data-bind="click:login.show"> Accedi qui!</A></DIV></DIV>				
+	</FORM>
+	</DIV>
+	
+	<DIV ID="register" CLASS="sheet">		
+	<div class="loading"></div>
+	<FORM CLASS="box" action="\\#" ONSUBMIT="return false;">
+		<DIV CLASS="loading_wall"></DIV>
+		<DIV CLASS="close" ONCLICK="$m.community.hide()">X</DIV>
+		<DIV CLASS="logo"></DIV>
+		<DIV CLASS="row" data-bind="visible:register.fields.nome.visible"><LABEL>Nome</LABEL><INPUT TYPE="text" PLACEHOLDER="Nome" data-bind="value:user.name" required></DIV>
+		<DIV CLASS="row" data-bind="visible:register.fields.cognome.visible"><LABEL>Cognome</LABEL><INPUT TYPE="text" PLACEHOLDER="Cognome" data-bind="value:user.surname" required></DIV>				
+		<DIV CLASS="row"><LABEL>Mail</LABEL><INPUT TYPE="text" PLACEHOLDER="Indirizzo mail" data-bind="value:user.mail" required></DIV>
+		<DIV data-bind="visible:register.fields.convenzione.visible">	
+			<A CLASS="row button" data-bind="invisible:register.convenzione,click:register.addConvenzione"><DIV>ho un codice convenzione</DIV></A>
+			<div class="passwords" data-bind="visible:register.convenzione">
+				<A CLASS="button" data-bind="click:register.removeConvenzione"><DIV>Nessuna convenzione</DIV></A>
+				<DIV CLASS="row"><LABEL>Convenzione</LABEL><INPUT TYPE="password" PLACEHOLDER="Codice" data-bind="value:user.password" required></DIV>			
+			</div>
+		</DIV>
+		<DIV data-bind="invisible:register.fields.password.automatic.visible">
+			<DIV CLASS="row"><LABEL>Password</LABEL><INPUT TYPE="password" PLACEHOLDER="Password" data-bind="value:user.password" required></DIV>
+			<DIV CLASS="row"><LABEL>Password</LABEL><INPUT TYPE="password" PLACEHOLDER="Ripeti password" data-bind="value:user.password2" required/></DIV>
+		</DIV>
+		<DIV data-bind="visible:register.fields.password.automatic.visible">					
+		<A CLASS="row button" data-bind="invisible:register.password,click:register.addPassword"><DIV>Inserisco la password</DIV></A>
+		<div class="passwords" data-bind="visible:register.password">
+			<A CLASS="button" data-bind="click:register.removePassword"><DIV>Creami la password</DIV></A>
+			<DIV CLASS="row"><LABEL>Password</LABEL><INPUT TYPE="password" PLACEHOLDER="Password" data-bind="value:user.password" required></DIV>
+			<DIV CLASS="row"><LABEL>Password</LABEL><INPUT TYPE="password" PLACEHOLDER="Ripeti password" data-bind="value:user.password2" required/></DIV>
+		</div>		
+		</DIV>	
+		<DIV CLASS="row" STYLE="display:none"><LABEL>Submit</LABEL><INPUT TYPE="submit"></DIV>		
+		<A CLASS="row button register" data-bind="click:register.try"><DIV>REGISTRATI</DIV></A>		
+		<DIV CLASS="row termini" STYLE="text-align: center;margin-top: -8px;"><A HREF=""><DIV CLASS="testo">Registrandoti accetti i termini di utilizzo.</A></DIV></DIV>
+		<div STYLE="text-align: center;border-top: solid 1px silver;margin-top: 14px;">oppure</div>
+		<DIV CLASS="row banda account"><DIV CLASS="testo">Hai giÌ  un account?<A data-bind="click:login.show"> Accedi qui!</A></DIV></DIV>
+		<A HREF="" CLASS="button error" data-bind="visible:register.error"><DIV data-bind="text:register.error">Login o password non valida!</DIV></A>		
+	</FORM>
+	</DIV>
+	
+	
+	
+	<DIV ID="register2" CLASS="sheet">		
+		
+		<form class="box">
+		<DIV CLASS="close" ONCLICK="$m.community.hide()">X</DIV>
+		<div class="logo profile"></div>
+		<div class="row"><label>Nome</label><input type="text" placeholder="Nome" data-bind="value:user.name"></div>
+		<div class="row"><label>Cognome</label><input type="text" placeholder="Cognome" data-bind="value:user.surname"></div>
+	
+		<div class="row h3">Genere</div>
+		<div class="row genere">
+			<div class="option"><label>Maschile</label><input type="radio"></div>
+			<div class="option"><label>Femminile</label><input type="radio"></div>
+		</div>
+		
+		<div class="row h3">Data nascita</div>
+	
+		<div class="row data giorno"><label>testo</label><input type="text" placeholder="Giorno"></div>
+		<div class="row data mese"><label>testo</label><input type="text" placeholder="Mese"></div>
+		<div class="row data anno"><label>testo</label><input type="text" placeholder="Anno"></div>
+	
+		<div class="row"><label>testo</label><input type="text" placeholder="Cap" data-bind="value:user.zip"></div>
+		<div class="row"><label>testo</label><input type="text" placeholder="Telefono cellulare" data-bind="value:user.phone"></div>
+		
+		<div class="row termini"><input type="checkbox"><div class="testo">Inviatemi offerte e notizie su Uelcom anche via mail.</div></div>
+			
+		<a class="row button register" data-bind="click:user.logout"><div>LOGOUT</div></a>
+		</form>	
+	</DIV>
+	
+	
+	<DIV ID="userData" CLASS="sheet">
+		<UL CLASS='menu'>
+			<LI><H2>Utente</H2></LI>
+			<LI CLASS="orders" data-bind="click:user.sheet.orders"><A><I CLASS='fa fa-shopping-cart'></I><SPAN>Ordini</SPAN></A></LI>
+			<LI><A ONCLICK=""><I CLASS='fa fa-gift'></I><SPAN>Premi</SPAN></A></LI>
+			<LI CLASS="dati active" data-bind="click:user.sheet.dati"><A ONCLICK=""><I CLASS='fa fa-group'></I><SPAN>Dati personali</SPAN></A></LI>			
+			<LI><A ONCLICK="$m.community.user.logout()"><I CLASS='fa fa-bar-chart-o'></I><SPAN>LOGOUT</SPAN></A></LI>
+					
+		</UL>
+		<DIV CLASS="box dati" style="display:block">
+			<DIV CLASS="picture" data-bind="background:user.picture"></DIV>
+			<DIV CLASS="data"><SPAN data-bind="text:user.name"></SPAN> <SPAN data-bind="text:user.surname"></SPAN></DIV>			
+			<DIV CLASS="data" data-bind="text:user.mail"></DIV>
+			<DIV>
+				<DIV CLASS="qrhelp">Fotografa questo QR con il tuo smartphone e troverai il tuo QR personale</DIV>
+				<DIV CLASS="qrhelparrow"></DIV>
+				<DIV CLASS="qr" data-bind="qr:user.qr"></DIV>
+			</DIV>
+		</DIV>
+		<DIV CLASS="box orders">
+			
+			<UL>
+				<LI CLASS="title">
+					<DIV CLASS="iter">
+						<DIV class="step">Pagato</DIV><B>></B>
+						<DIV class="step">Spedito</DIV><B>></B>
+						<DIV class="step">Consegnato</DIV>
+					</DIV>
+				</LI>
+				
+				<div data-bind="source:user.orders" data-template="tplOrders">
+					<DIV ID="tplOrders">					
+						<LI data-bind="click:toggle">
+							<DIV class="date" data-bind="text:data"></DIV> 
+							<DIV class="total"><SPAN data-bind="eur:total"></SPAN></DIV>
+							<DIV CLASS="iter">
+								<DIV CLASS="step pagato" data-bind="visible:pagato,text:pagato">01/01/2014</DIV>
+								<SPAN data-bind="visible:spedito"><B>></B><DIV CLASS="step spedito" data-bind="text:spedito">01/01/2014</DIV></SPAN>
+								<SPAN data-bind="visible:consegnato"><B>></B><DIV CLASS="step consegnato" data-bind="text:consegnato">01/01/2014</DIV></SPAN>
+							</DIV>
+							
+							<DIV>
+								<UL data-bind="source:rows" data-template="tmpBasketRows" CLASS="rows">							
+								<DIV ID="tmpBasketRows">
+								<LI><SPAN data-bind="text:qta"></SPAN> X <SPAN data-bind="text:description"></SPAN><SPAN data-bind="eur:importo" CLASS="importo"></SPAN></LI>
+								</DIV>
+								</UL>
+							</DIV>
+						</LI>
+					</DIV>
+				</divs>
+			</UL>
+			
+		</DIV>
+	</DIV>
+	
+	</div>
+</DIV>
+</DIV>
+
+
