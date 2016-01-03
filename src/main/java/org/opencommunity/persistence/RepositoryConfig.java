@@ -1,17 +1,27 @@
 package org.opencommunity.persistence;
 
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
+import javax.persistence.spi.PersistenceProviderResolver;
+import javax.persistence.spi.PersistenceProviderResolverHolder;
 import javax.sql.DataSource;
 
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -21,7 +31,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@PropertySource({"community.properties"})
+//@PropertySource({"community.properties"})
 @Configuration
 @Component("repositoryConfigCommunity")
 @EnableJpaRepositories(
@@ -32,14 +42,32 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class RepositoryConfig {
 	
 	private DriverManagerDataSource datasource;
-	@Value("${community.db2.url}") private String dburl;
-	@Value("${community.db2.driver}") private String dbDriver;
-	@Value("${community.db2.user}") private String dbUser;
-	@Value("${community.db2.psw}") private String dbPsw;
-	@Value("${community.db2.dialect}") private String dbDialect;
+	@Value("${community.db.url}") 		private String dburl;
+	@Value("${community.db.driver}") 	private String dbDriver;
+	@Value("${community.db.user}") 		private String dbUser;
+	@Value("${community.db.psw}") 		private String dbPsw;
+	@Value("${community.db.dialect}") 	private String dbDialect;
 	@Value("${community.db.create.url}") private String createUrl;
 	@Value("${community.db.create.cmd}") private String createCmd;
 
+	
+	 @Bean
+     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException {
+         PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
+         propertySourcesPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(Boolean.TRUE);
+         try{
+         if(InetAddress.getLocalHost().getHostAddress().equals("95.110.228.140"))
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
+         else
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:local/*.properties"));
+         }catch(Exception e)
+         {
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
+         }
+         
+         return propertySourcesPlaceholderConfigurer;
+     }
+	
 	public DataSource dataSource() {
 		  	//System.out.println("datasource:"+servletContext.getRealPath("WEB-INF/data"));		
 		datasource = new DriverManagerDataSource();
@@ -82,7 +110,9 @@ public class RepositoryConfig {
 		  LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		    
 		  Properties jpaProperties = new Properties();
-		    		 jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");		
+		    		 jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+		    		// jpaProperties.setProperty(org.hibernate.jpa.AvailableSettings.PROVIDER, "org.hibernate.jpa.HibernatePersistenceProvider");
+		    		 
 		    		 
 		  
 		  factory.setDataSource(dataSource());
@@ -93,7 +123,16 @@ public class RepositoryConfig {
 		  
 
 		  factory.afterPropertiesSet();
+/*
+		  PersistenceProviderResolverHolder.setPersistenceProviderResolver(new PersistenceProviderResolver() {			  	
+			    public List<PersistenceProvider> getPersistenceProviders() {
+			    	List<PersistenceProvider> result= new ArrayList<PersistenceProvider>();
+			        	result.add(new HibernatePersistenceProvider());
+			        return result;
+			    }
 
+			    public void clearCachedProviders() {}
+			});*/
 		  return factory;
 		  }
 	  

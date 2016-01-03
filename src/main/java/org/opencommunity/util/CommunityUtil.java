@@ -8,11 +8,11 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource({"application.properties"})
 @Configuration
 public class CommunityUtil {
-	@Value("${proxy}")	private String proxy;
+	//@Value("${proxy}")	private String proxy;
 	
 	@Bean
 	public Client client()
 		{
-		return new Client(proxy);
+		return new Client(null);
 		}
 }

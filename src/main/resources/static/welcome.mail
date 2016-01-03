@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+
+<table width="100%" align="center" cellpadding="0" cellspacing="0" bgcolor="#eae8e8">
+    <tbody><tr>
+        <td>
+
+            <table width="60%" cellpadding="0" cellspacing="0" align="center">
+
+                <tbody><tr>
+                    <td>
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <td style="padding:10px 0">
+                                    <img src="http://www.ekaros.it/MyShop/email/img/logo.png" alt="Ekaros srl - My shop app ecommerce" width="200" height="auto" class="CToWUd">
+                                </td>
+                            </tr>
+                            </tbody></table>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="border:1px solid #ccc">
+
+                            <tbody><tr>
+                                <td colspan="3" style="padding:50px;font-size:15px;color:#666">
+                                    <p>Ciao $firstName</p>          <p>Mi chiamo Michela e  sono la Responsabile del servizio di attenzione al cliente di My Shop di Ekaros srl: vi ringrazio per averci scelto.</p>
+                                    <p>Vi ricordo che con My Shop potrete creare in pochi click il sito gratis per il vostro negozio, in cui attivare un catalogo prodotti che vi permetterà di ......</p>
+                                    <p>Potete contattarmi per mail o per telefono al numero <a href="tel:3920055977" value="+39" target="_blank"> 392 0055977</a>.</p>
+                                    <p>Un saluto e a presto<br>Michela</p>
+                                    <p>	PS: vi ricordiamo che il servizio è disponibile in ogni lingua: se avete invitati stranieri o se il/la vostro/a partner non è italiano/a, cliccate sulla bandierina in alto a destra nel sito per visitare My Shop nella lingua che desiderate.<br>  		</p>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="3" style="padding:0 50px">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="font-size:15px;color:#666" text-align="center">Crea ora il tuo Shop!</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:5px 5px 0" align="center" width="100"><a href="myshop://login/$registerId"><img src="http://www.ekaros.it/MyShop/email/img/MY_Shop.png" alt="Ekaros srl - My shop app ecommerce" width="80" height="auto" class="CToWUd"></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td colspan="3" style="padding:0 50px">
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #000;border-bottom:1px solid #000">
+                                        <tbody>
+                                        <tr>
+                                            <td style="font-weight:bold;font-size:15px;color:#333">Seguici in</td>
+                                            <td width="40" align="center" style="padding:10px 0"><a href="http://link.email......" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/img/social/fb.png" width="26" height="26" class="CToWUd"></a></td>
+                                            <td width="40" align="center" style="padding:10px 0"><a href="http://link.email......" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/img/social/google.png" width="26" height="26" class="CToWUd"></a></td>
+                                            <td width="40" align="center" style="padding:10px 0"><a href="http://link.email......" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/img/social/linkedin.png" width="26" height="26" class="CToWUd"></a></td>
+                                            <!--
+                                                <td width="40" align="center" style="padding:10px 0"><a href="http://link.email.dynect.net/link.php?H=fRSspyRTfXOOvOeJ4vxRu4Vq7WUUeYx2zXTCRhQtuwAhFhW9P2Bq49eSN2XMia56cgc5Z5ZlOGIyjFM11fxfZG5auObS31uKqzo8poQCxJU%3D&amp;G=583&amp;R=https%3A%2F%2Fwww.facebook.com%2Fzankyou&amp;I=20151118065839.000000c7bb36%40mail6-01-ewr.dyndns.com&amp;X=MHw3NjIxMzk6aXQ7MXw3NjIxNDA6bmV3LXVzZXJzOzJ8NzczNDU2OjEyMjUwNjcwOw%3D%3D" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/https://ci5.googleusercontent.com/proxy/Nn0dUSlbmfJUaaW3DNZA3P7UfiP4J-sAsSGUETRnaT-T1aHjpkwaWhFEJNMZlQo4wJ-Hj3yXSoFJ1wlxzSiLNdXGLENyMA=s0-d-e1-ft#http://www.zankyou.com/img/mail/ico_facebook.png" width="26" height="26" class="CToWUd"></a></td>
+                                                <td width="40" align="center" style="padding:10px 0"><a href="http://link.email.dynect.net/link.php?H=fRSspyRTfXOOvOeJ4vxRu4Vq7WUUeYx2zXTCRhQtuwAhFhW9P2Bq49eSN2XMia56cgc5Z5ZlOGIyjFM11fxfZG5auObS31uKqzo8poQCxJU%3D&amp;G=583&amp;R=https%3A%2F%2Ftwitter.com%2Fzankyou&amp;I=20151118065839.000000c7bb36%40mail6-01-ewr.dyndns.com&amp;X=MHw3NjIxMzk6aXQ7MXw3NjIxNDA6bmV3LXVzZXJzOzJ8NzczNDU2OjEyMjUwNjcwOw%3D%3D" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/https://ci6.googleusercontent.com/proxy/gKjai0G_luaiOl4AsbPnmfT4QXo-aCfvk3pGCUef1UxVcnoZ7xPefTQKXee_QaOhkSep8u0eN_Uz_NaPPqS5QV7mFp5v=s0-d-e1-ft#http://www.zankyou.com/img/mail/ico_twitter.png" width="26" height="26" class="CToWUd"></a></td>
+                                                <td width="40" align="center" style="padding:10px 0"><a href="http://link.email.dynect.net/link.php?H=fRSspyRTfXOOvOeJ4vxRu4Vq7WUUeYx2zXTCRhQtuwAhFhW9P2Bq49eSN2XMia56cgc5Z5ZlOGIyjFM11fxfZG5auObS31uKqzo8poQCxJU%3D&amp;G=583&amp;R=https%3A%2F%2Fplus.google.com%2F106957886897568858927&amp;I=20151118065839.000000c7bb36%40mail6-01-ewr.dyndns.com&amp;X=MHw3NjIxMzk6aXQ7MXw3NjIxNDA6bmV3LXVzZXJzOzJ8NzczNDU2OjEyMjUwNjcwOw%3D%3D" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/https://ci4.googleusercontent.com/proxy/vS6ls1LhczTQ83OT0Uebd5fC3N40pkzwZC2eh62IF8RbaOXpXWNOXFbWe5N_h8Caf__s21VbXMK43gsNb7LF-Decyg=s0-d-e1-ft#http://www.zankyou.com/img/mail/ico_gplus.png" width="26" height="26" class="CToWUd"></a></td>
+                                                <td width="40" align="center" style="padding:10px 0"><a href="http://link.email.dynect.net/link.php?H=fRSspyRTfXOOvOeJ4vxRu4Vq7WUUeYx2zXTCRhQtuwAhFhW9P2Bq49eSN2XMia56cgc5Z5ZlOGIyjFM11fxfZG5auObS31uKqzo8poQCxJU%3D&amp;G=583&amp;R=http%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fzankyou&amp;I=20151118065839.000000c7bb36%40mail6-01-ewr.dyndns.com&amp;X=MHw3NjIxMzk6aXQ7MXw3NjIxNDA6bmV3LXVzZXJzOzJ8NzczNDU2OjEyMjUwNjcwOw%3D%3D" style="text-decoration:none" target="_blank"><img src="http://www.ekaros.it/MyShop/email/https://ci6.googleusercontent.com/proxy/tHV1Xh9Q8muwQ3QGBPC1L2z53YvfxUITIdPUPTnKjGipDQ0MiAGsdCRYm1EoLhldY3MjTWgYR7BUk1AjEHZi9B9Bnpsa-A=s0-d-e1-ft#http://www.zankyou.com/img/mail/ico_linkedin.png" width="26" height="26" class="CToWUd"></a></td>
+                                            -->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="3" style="padding:20px 50px 0"><img src="http://www.ekaros.it/MyShop/email/img/logo.png" alt="Ekaros srl - My shop app ecommerce" width="80" height="auto" class="CToWUd"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="padding:10px 50px 30px;font-size:13px;color:#666">Copyright © 2015 Ekaros srl</td>
+                            </tr>
+
+
+                            </tbody></table>
+                    </td>
+                </tr>
+
+                </tbody></table>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+        <style>
+            body, td, input, textarea, select {
+                margin: 0;
+                font-family: arial,sans-serif;
+            }
+
+        </style>
+

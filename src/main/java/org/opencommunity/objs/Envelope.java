@@ -49,9 +49,10 @@ public class Envelope
 		
 		this.postman=postman;
 		this.id=subject.hashCode()+"";
-		System.out.println("---------------------------");
+		System.out.println("*********************************");
 		System.out.println(this.url);
 		System.out.println(this.postman);
+		System.out.println("*********************************");
 		}
 	public Envelope setPostman(JavaMailSender postman) {
 		Envelope.postman = postman;
@@ -84,45 +85,38 @@ public class Envelope
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public void send(String to, Object obj) 
-		{
-		try
+	public void send(String to, Object obj) throws Exception
+		{		
+		Map<String,Object> model = null;
+		if(obj instanceof Map)
+			model=(Map)obj;
+		else
 			{
-			Map<String,Object> model = null;
-			if(obj instanceof Map)
-				model=(Map)obj;
-			else
-				{
-				ObjectMapper m = new ObjectMapper();
-				model = m.convertValue(obj, Map.class);
-				}
-				
-			URL url = new URL(this.url);						
-			VelocityEngineFactoryBean vf =  new VelocityEngineFactoryBean();
-				vf.setResourceLoaderPath(url.getProtocol()+"://"+url.getHost()+":"+url.getPort());
-				vf.setPreferFileSystemAccess(false);			
-			
-			String body = VelocityEngineUtils.mergeTemplateIntoString(vf.createVelocityEngine(), url.getPath(), model);
-			
-			VelocityContext context = new VelocityContext(model);				
-			StringWriter writer = new StringWriter();
-			Velocity.evaluate(context, writer, "VELOCITY", this.subject);			
-			
-			MimeMessage mimeMessage = this.postman.createMimeMessage();
-			MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-				message.setFrom(this.from);
-				message.setTo(to);
-				message.setSubject(this.subject);
-			System.out.println("send:"+body);
-				message.setText(body,true);
-				
-			
-			this.postman.send(mimeMessage);
+			ObjectMapper m = new ObjectMapper();
+			model = m.convertValue(obj, Map.class);
 			}
-		catch(Exception e)
-			{
-			e.printStackTrace();
-			}
+			
+		URL url = new URL(this.url);						
+		VelocityEngineFactoryBean vf =  new VelocityEngineFactoryBean();
+			vf.setResourceLoaderPath(url.getProtocol()+"://"+url.getHost()+":"+url.getPort());
+			vf.setPreferFileSystemAccess(false);			
+					
+		String body = VelocityEngineUtils.mergeTemplateIntoString(vf.createVelocityEngine(), url.getPath(), model);
+		
+		VelocityContext context = new VelocityContext(model);				
+		StringWriter writer = new StringWriter();
+		Velocity.evaluate(context, writer, "VELOCITY", this.subject);			
+		
+		MimeMessage mimeMessage = this.postman.createMimeMessage();
+		MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+			message.setFrom(this.from);
+			message.setTo(to);
+			message.setSubject(this.subject);
+		System.out.println("send:"+body);
+			message.setText(body,true);
+			
+		
+		this.postman.send(mimeMessage);		
 		}
 
 	

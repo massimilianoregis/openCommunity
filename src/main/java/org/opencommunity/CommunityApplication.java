@@ -9,11 +9,12 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 
 
 @Configuration
-@ComponentScan(basePackages="org.opencommunity")
+@ComponentScan(basePackages="org.opencommunity",includeFilters=@ComponentScan.Filter(value= org.opencommunity.filter.AllowOriginFilter.class, type=FilterType.ASSIGNABLE_TYPE))
 @EnableAutoConfiguration(exclude = JpaRepositoriesAutoConfiguration.class)
 //@EnableJpaRepositories
 //@EnableAspectJAutoProxy

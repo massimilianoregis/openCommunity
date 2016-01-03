@@ -48,13 +48,7 @@ public class CommunityTest
 	@Test
 	public void registrazioneUtente() throws Exception
 		{
-		JSONObject map = new JSONObject();
-	  	   map.put("mail", mail);
-	  	   map.put("psw", psw);
-	  	   map.put("first_name", "Massimiliano");
-	  	   map.put("last_name", "Regis");
-	  	   
-		User entity = new RestTemplate().postForObject("http://localhost:8080/community/register",map,User.class);	  
+		User entity = new RestTemplate().getForObject("http://localhost:8080/community/register?mail={mail}",User.class,mail);	  
 		this.id=entity.getRegisterId();
 		System.out.println(id);
 		}
@@ -86,12 +80,23 @@ public class CommunityTest
 	  	   map.put("mail", admin);
 	  	   map.put("psw", adminPsw);
 	  	   
-	  	User entity =new RestTemplate().getForObject("http://localhost:8080/community/login?mail={mail}&psw={psw}",User.class,map);
-	  		entity.setData("{\"price\":\"extra\",\"option\":[\"A\",\"B\",\"C\"]}");
-	  		entity.setFirstName("nome");
-	  	new RestTemplate().postForObject("http://localhost:8080/community/user",entity,User.class);
 	  	
-	  	System.out.println(entity.getRoles());
+	  	//User entity =new RestTemplate().getForObject("http://localhost:8080/community/login?mail={mail}&psw={psw}",User.class,map);
+	  	String json="{'mail':'"+admin+"',"
+	  			+ "'avatar':'http://m2.paperblog.com/i/83/830067/avatar-gravatar-L-wbC85E.jpeg',"
+	  			+ "'background':'http://www.motionbackgroundsforfree.com/wp-content/uploads/2012/04/Screen-shot-2012-04-02-at-3.46.15-PM.png',"
+	  			+ "'data':{'price':'extra','option':['A','B','C']}"
+	  			+ "}";
+	  	json=json.replaceAll("'", "\"");
+	  	
+	  	HttpHeaders headers = new HttpHeaders();
+	  		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(json,headers);	  	
+		
+	
+	  	new RestTemplate().postForObject("http://localhost:8080/community/user",requestEntity,User.class);
+	  	
+	  	//System.out.println(entity.getRoles());
 		}
 	@Test
 	public void sendPsw() throws Exception

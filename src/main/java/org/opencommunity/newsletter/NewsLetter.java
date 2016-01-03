@@ -28,7 +28,7 @@ public class NewsLetter
 		this.sender=sender;
 		}
 		
-	public void send(String from, String to,String subject, String url, Map map)
+	public void send(String from, String to,String subject, String url, Map map) throws Exception
 		{
 		new Envelope(from, subject, url, sender).send(to, map);
 		}

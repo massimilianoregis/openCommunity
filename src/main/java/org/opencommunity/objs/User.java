@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Vector;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
@@ -25,6 +27,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.opencommunity.exception.InvalidPassword;
 import org.opencommunity.persistence.Repositories;
 import org.opencommunity.util.AutomaticPassword;
+import org.opencommunity.util.Util;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,8 +50,10 @@ public class User implements Serializable
 	private String firstName;
 	private String lastName;
 	private String root;
-	private Long lastaccesstime;
+	private Date lastaccesstime;
 	private Date sendRegisterMail;
+	private String background;
+	private String avatar;
 	
 	@Transient
 	private Integer logtry=0;
@@ -63,6 +68,10 @@ public class User implements Serializable
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(cascade = {CascadeType.ALL})
 	private Set<Role> roles = new HashSet<Role>();
+	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(cascade = {CascadeType.ALL})
+	private Set<Device> devices = new HashSet<Device>();
 	
 	
 	
@@ -100,7 +109,7 @@ public class User implements Serializable
 			}		
 		
 		cm.setActualUser(this);
-		this.lastaccesstime=System.currentTimeMillis();
+		this.lastaccesstime=new Date();
 		this.logtry=0;	
 		return true;
 		}
@@ -145,14 +154,14 @@ public class User implements Serializable
 		}
 	
 	
-	public void resetPassword()
+	public void resetPassword() throws Exception
 		{
 		this.psw= new AutomaticPassword().newPassword();
 		Community.getInstance().resetPasswordMail(this);
 		}
 	
 	
-	public void sendPassword()
+	public void sendPassword() throws Exception
 		{
 		Community.getInstance().sendPasswordMail(this);
 		}
@@ -182,13 +191,13 @@ public class User implements Serializable
 		}
 	
 	
-	public void register()
+	public void register() throws Exception
 		{		
 		save();
 		this.registerId = new Pending(this,Community.getInstance().getUserRole()).save();
 		this.sendWelcome();
 		}
-	public void register(Role role)
+	public void register(Role role) throws Exception
 		{		
 		save();
 		this.registerId = new Pending(this,Community.getInstance().getUserRole(),role).save();
@@ -201,7 +210,7 @@ public class User implements Serializable
 		}
 	
 	
-	public void sendWelcome()
+	public void sendWelcome() throws Exception
 		{
 		Community.getInstance().sendWelcomeMail(this);
 		sendRegisterMail=new Date();
@@ -234,10 +243,10 @@ public class User implements Serializable
 		System.out.println(this.root);
 		return new FileInputStream(new File(this.root,file));
 		}
-	public Long getLastaccesstime() {
+	public Date getLastaccesstime() {
 		return lastaccesstime;
 	}
-	public void setLastaccesstime(Long lastaccesstime) {
+	public void setLastaccesstime(Date lastaccesstime) {
 		this.lastaccesstime = lastaccesstime;
 	}
 	public Date getSendRegisterMail() {		
@@ -245,6 +254,21 @@ public class User implements Serializable
 	}
 	public void setSendRegisterMail(Date sendRegisterMail) {
 		this.sendRegisterMail = sendRegisterMail;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) throws Exception{
+	this.avatar=avatar;
+	try{this.avatar = Util.getInstance().saveImage(avatar);}catch(Exception e){}
+	}
+	public String getBackground() {
+		return background;
+	}
+	public void setBackground(String background) throws Exception{
+		this.background = background;
+		try{this.background = Util.getInstance().saveImage(background);}catch(Exception e){}
+		
 	}
 	
 //	public void setJsondata(String jsondata) throws Exception 
@@ -264,12 +288,32 @@ public class User implements Serializable
 	}
 	
 	
+	/*DISPOSITIVI*/
+	public Set<Device> getDevices() {
+		return devices;
+	}
+	public void setDevices(Set<Device> devices) {
+		this.devices = devices;
+	}
+	public void send(String title, String msg, Map from)	throws Exception{
+		List<String> list = new Vector<String>();
+		for(Device dev:devices)
+			list.add(dev.getId());
+		
+		Community.getInstance().send(title, msg,from,list.toArray(new String[0]));
+		}
+	/*/DISPOSITIVI*/
+	
+	
 	static private 	ObjectMapper mapper = new ObjectMapper();	
 
 	public void extend(User user)
 		{
-		this.firstName=user.firstName;
-		this.lastName=user.lastName;
+		this.firstName	=	user.firstName;
+		this.lastName	=	user.lastName;
+		this.background	=	user.background;
+		this.avatar		=	user.avatar;
+		
 		if(user.jsondata!=null)	this.jsondata=user.jsondata;
 		if(user.psw!=null)		this.psw=user.psw;		
 		}

@@ -19,8 +19,11 @@ public class JWT
 	private String jwt;
 	private Payload payload;
 	
-	
 	public JWT(String jwt,Community community) throws InvalidJWT
+		{
+		this(jwt,community.getSecretKey());
+		}
+	public JWT(String jwt,String secret) throws InvalidJWT
 		{
 		try
 			{
@@ -28,7 +31,6 @@ public class JWT
 			JWSObject object =JWSObject.parse(jwt);		
 			
 			CommunityService.JWTResponse jwtObject = json.readValue(object.getPayload().toString(), CommunityService.JWTResponse.class);
-			String secret = community.getSecretKey();
 			
 			JWSVerifier verifier = new MACVerifier(secret.getBytes());
 			if(!object.verify(verifier)) throw new InvalidJWT();

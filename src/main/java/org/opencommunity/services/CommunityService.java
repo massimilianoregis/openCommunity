@@ -5,22 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.hibernate.dialect.H2Dialect;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.opencommunity.exception.InvalidJWT;
 import org.opencommunity.exception.UserJustPresent;
 import org.opencommunity.exception.UserNotFound;
+import org.opencommunity.messages.MessageController;
 import org.opencommunity.objs.Community;
+import org.opencommunity.objs.Device;
+import org.opencommunity.objs.Envelope;
 import org.opencommunity.objs.Log;
 import org.opencommunity.objs.Pending;
 import org.opencommunity.objs.Role;
 import org.opencommunity.objs.User;
 import org.opencommunity.persistence.CommunityRepository;
 import org.opencommunity.persistence.Repositories;
-import org.opencommunity.security.Secured;
 import org.opencommunity.security.SilentSecured;
-import org.opencommunity.util.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +54,48 @@ public class CommunityService
 	@Autowired
 	private CommunityRepository communityRepository;
 	
+	@Autowired
+	private DataSource datasource;
+	
 		
 	static private ObjectMapper json = new ObjectMapper();
+	/*Notification*/
+	@RequestMapping(value="notify/{mail:.*}/send", method = RequestMethod.GET)
+	public @ResponseBody void sendUser(@PathVariable String mail,String title, String msg) throws Exception
+		{						
+		community.getUser(mail).send(title, msg,null);		
+		}
+
 	
+	
+	@RequestMapping(value="notify/send", method = RequestMethod.POST)
+	public @ResponseBody void send(@RequestBody RequestSend send) throws Exception
+		{
+		if(send.getDevices()!=null)
+			community.send(send.getTitle(), send.getText(),send.getPayload(),send.getDevices());
+		if(send.getMail()!=null)
+			community.sendToMail(send.getTitle(), send.getText(),send.getPayload(),send.getMail());
+		}
+	@RequestMapping("/notify/{mail:.*}/addDevice")
+	public @ResponseBody void addDevice(@PathVariable String mail,String type, String id) throws Exception
+		{		
+		User user =community.getUser(mail); 
+			user.getDevices().add(new Device(type,id));
+			user.save();
+		}
+	/*/Notification*/
+	
+	@RequestMapping("/resetDB")
+	public @ResponseBody void resetDB() throws Exception
+		{						
+		
+		LocalSessionFactoryBuilder cnf =new LocalSessionFactoryBuilder(datasource);			
+			cnf.scanPackages("org.opencommunity");
+			cnf.getProperties().setProperty(org.hibernate.cfg.Environment.DIALECT, H2Dialect.class.getName());
+			new SchemaExport(cnf).execute(false, true, true,true);
+		
+		//Persistence.generateSchema("community",null);		
+		}
 	
 	@RequestMapping("/community")
 	public @ResponseBody List<Community> communities() throws Exception
@@ -85,7 +131,7 @@ public class CommunityService
 	
 	//salva utente
 	@RequestMapping(value="/user", method = RequestMethod.POST)
-	public @ResponseBody void me(@RequestBody User user) throws UserJustPresent
+	public @ResponseBody User me(@RequestBody User user) throws UserJustPresent
 		{						
 		User usr = community.getUser(user.getMail());		
 		if(usr==null)	
@@ -97,15 +143,16 @@ public class CommunityService
 		usr.extend(user);
 			 
 	    usr.save();
+	    return new JWTResponse(usr,community);
 		}
 	//leggi lista utenti
 	@RequestMapping(value= "/user",method=RequestMethod.GET)
-	public @ResponseBody List<User> userList() throws Exception
+	public @ResponseBody List<User> userList(String mail) throws Exception
 		{						
 		return community.getUsers();		
 		}
 	//leggi utente singolo
-	@RequestMapping(value= "/user/{mail:.*}",method=RequestMethod.GET)
+	@RequestMapping(value= "/user/{mail:.+}",method=RequestMethod.GET)
 	public @ResponseBody User user(@PathVariable String mail) throws Exception
 		{							
 		try{
@@ -128,9 +175,10 @@ public class CommunityService
 		return Repositories.pending.findAll();		
 		}
 	@RequestMapping("/confirm/{id}")
-	public @ResponseBody void confirm(@PathVariable String id) throws Exception
+	public @ResponseBody User confirm(@PathVariable String id) throws Exception
 		{			
-		community.confirmRegistration(id);		
+		String mail= community.confirmRegistration(id);	
+		return new JWTResponse(community.getUser(mail),community);
 		}
 
 	
@@ -158,7 +206,8 @@ public class CommunityService
 		{
 		User user = community.addUser(request.getMail()); 
 			user.setName(request.getFirst_name(),request.getLast_name());
-			user.setPassword(request.getPsw());			
+			user.setPassword(request.getPsw());
+			user.setAvatar(request.avatar);
 		if(request.getData()!=null)
 			user.setData(request.getData());
 		else
@@ -211,7 +260,7 @@ public class CommunityService
 		}	
 	
 	//@Secured("Admin")	
-	@RequestMapping(value="/user/role",method=RequestMethod.GET)
+	@RequestMapping(value="/{mail}/role",method=RequestMethod.GET)
 	public @ResponseBody void list(String mail,String role) throws Exception
 		{		
 		community.getUser(mail).addRole(Repositories.role.findOne(role));				
@@ -222,12 +271,12 @@ public class CommunityService
 		return community.me();		
 		}
 	@RequestMapping("/{mail}/sendPsw")
-	public @ResponseBody void sendPassword(@PathVariable String mail)
+	public @ResponseBody void sendPassword(@PathVariable String mail) throws Exception
 		{						
 		community.getUser(mail).sendPassword();		
 		}
 	@RequestMapping("/{mail}/resetPsw")
-	public @ResponseBody void resetPassword(@PathVariable String mail)
+	public @ResponseBody void resetPassword(@PathVariable String mail) throws Exception
 		{						
 		community.getUser(mail).resetPassword();		
 		}
@@ -252,9 +301,15 @@ public class CommunityService
 	
 	@RequestMapping(value="/jwt")
 	public @ResponseBody User check(String jwt) throws InvalidJWT
-		{			
+		{							
 		User user = this.community.getUserFromJWT(jwt);
-		return new JWTResponse(user, this.community);
+		return new JWTResponse(user, this.community,jwt);		
+		}
+	
+	@RequestMapping(value="/sendMail")
+	public @ResponseBody void send(String to) throws Exception
+		{			
+		new Envelope("max@ekaros.it","test mail","http://95.110.228.140:8080/openCommunity/welcome.mail").send(to, new HashMap());
 		}
 	
 	@SilentSecured("admin")		
@@ -263,6 +318,12 @@ public class CommunityService
 		{			
 		return "CIAO";				
 		}
+	
+	  @ExceptionHandler(Exception.class)
+	  @ResponseBody
+	  public String handleException(Exception  exception) {
+	      return exception.getMessage();
+	  } 
 	
 	static public class RequestLogin
 		{
@@ -280,9 +341,12 @@ public class CommunityService
 		private String psw;
 		private String first_name;
 		private String last_name;
+		private String avatar;
 		private Map data;
 		private String role;
 		
+		public String getAvatar() {return avatar;}
+		public void setAvatar(String avatar) {this.avatar = avatar;}
 		public String getMail() {return mail;}
 		public void setMail(String mail) {this.mail = mail;}
 		public String getPsw() {return psw;}
@@ -301,26 +365,41 @@ public class CommunityService
 		private String jwt;
 		private String community;
 		public JWTResponse(){}
-		public JWTResponse(User user,Community community)
-			{			
-			setFirstName(user.getFirstName());
-			setLastName(user.getLastName());
-			setMail(user.getMail());
-			setRegisterId(user.getRegisterId());
-			setRoles(user.getRoles());
-//			setRoot(user.getRoot());
+		public JWTResponse(User user,Community community,String jwt)
+			{
+			this.jwt=jwt;
 			this.community=community.getName();
+			setUser(user);			
+			setData(user.getData());	
+			}
+		public JWTResponse(User user,Community community)
+			{
+			this(user,community.getName(),community.getSecretKey());
+			}
+		public JWTResponse(User user,String name,String secret)
+			{			
+			setUser(user);
+			this.community=name;
 			
 			try{Payload payload = new Payload(json.writeValueAsString(this));
 				JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 				JWSObject jwsObject = new JWSObject(header, payload);		
-				JWSSigner signer = new MACSigner(community.getSecretKey().getBytes());
+				JWSSigner signer = new MACSigner(secret.getBytes());
 				jwsObject.sign(signer);		
 				this.jwt=jwsObject.serialize();
 				
 			setData(user.getData());	
 				
 			}catch(Exception e){e.printStackTrace();}
+			}
+		public void setUser(User user)
+			{
+			setFirstName(user.getFirstName());
+			setLastName(user.getLastName());
+			setMail(user.getMail());
+			setRegisterId(user.getRegisterId());
+			setRoles(user.getRoles());			
+			try{setAvatar(user.getAvatar());}catch(Exception e){}			
 			}
 		public String getCommunity() 
 			{
@@ -330,6 +409,52 @@ public class CommunityService
 			{
 			return jwt;
 			}
+		}
+	
+	public static class RequestSend
+		{
+		private String title;
+		private String text;
+		private String link;
+		private Map payload;
+		private String[] devices;
+		private String[] mail;
+		public String getTitle() {
+			return title;
+		}
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		public String getText() {
+			return text;
+		}
+		public void setText(String text) {
+			this.text = text;
+		}
+		public String getLink() {
+			return link;
+		}
+		public void setLink(String link) {
+			this.link = link;
+		}
+		public String[] getDevices() {
+			return devices;
+		}
+		public void setDevices(String[] devices) {
+			this.devices = devices;
+		}
+		public String[] getMail() {
+			return mail;
+		}
+		public void setMail(String[] mail) {
+			this.mail = mail;
+		}
+		public Map getPayload() {
+			return payload;
+		}
+		public void setPayload(Map payload) {
+			this.payload = payload;
+		}
 		}
 	}
 

@@ -1,8 +1,10 @@
 package org.opencommunity.objs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,8 +15,10 @@ import javax.persistence.Transient;
 import org.opencommunity.exception.InvalidJWT;
 import org.opencommunity.exception.UserJustPresent;
 import org.opencommunity.exception.UserNotFound;
+import org.opencommunity.notification.Notify;
 import org.opencommunity.objs.user.UnknowUser;
 import org.opencommunity.persistence.Repositories;
+import org.opencommunity.services.CommunityService.JWTResponse;
 import org.opencommunity.util.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +35,8 @@ public class Community
 	private String secretKey;
 	private String dataRegister;
 	private String dataUnknow;
+	@OneToOne(cascade=CascadeType.ALL)
+	private Notify notify;
 	
 	
 	@Autowired
@@ -49,28 +55,15 @@ public class Community
 		{		
 		Community.instance=this;
 		}
-	public Community(String name,String root, Envelope welcome,String admin)
-		{
-		this(name,root,welcome,admin,null);
-		}
-	public Community(String name,String root, Envelope welcome,String admin,String psw)
+	
+	public Community(String name,String root, Envelope welcome,String secretKey, Notify notify)
 		{
 		Community.instance=this;
 		this.root=root;
 		this.welcome=welcome;
 		this.name=name;
-		this.secretKey=UUID.randomUUID().toString();
-			addRole(Role.ADMIN);
-			addRole(Role.USER);
-		try{
-			User user = addUser(admin);						 
-			 	 user.addRole(getAdminRole());
-			 	 user.addRole(getUserRole());
-			 	 user.setPassword(psw);
-			 	 user.save();
-			 	 user.sendPassword();
-			}
-		catch(UserJustPresent e){}	
+		this.secretKey=secretKey;		
+		this.notify=notify;
 		}
 	public void setDataRegister(String data)		{this.dataRegister=data;}
 	public void setDataUnknow(String data)			{this.dataUnknow=data;}
@@ -119,22 +112,23 @@ public class Community
 	public List<User> getUsers()
 		{		
 		return Repositories.user.findDistinctUserByRolesCompany(name);
+		//return Repositories.user.findAll();
 		}
-	public void resetPasswordMail(User user)
+	public void resetPasswordMail(User user) throws Exception
 		{
 		System.out.println("send to:"+user.getMail()+" "+welcome);
 		welcome.send(user.getMail(),user);		
 		}
 	
 	
-	public void sendPasswordMail(User user)
+	public void sendPasswordMail(User user) throws Exception
 		{
 		System.out.println("send to:"+user.getMail()+" "+welcome);
 		welcome.send(user.getMail(),user);		
 		}
 	
 	
-	public void sendWelcomeMail(User user)
+	public void sendWelcomeMail(User user) throws Exception
 		{
 		System.out.println("send to:"+user.getMail()+" "+welcome);
 		welcome.send(user.getMail(),user);		
@@ -177,9 +171,11 @@ public class Community
 		{
 		this.session.setUser(user);
 		}
-	public void confirmRegistration(String id) 
+	public String confirmRegistration(String id) 
 		{
-		Repositories.pending.findOne(id).execute();
+		Pending pending=Repositories.pending.findOne(id);		
+		pending.execute();
+		return pending.getUser();
 		}
 	public String getDataRegister() {
 		return dataRegister;
@@ -188,7 +184,7 @@ public class Community
 		return dataUnknow;
 	}
 	
-	public User getUserFromJWT(String jwt)
+	public User getUserFromJWT(String jwt) throws InvalidJWT
 		{
 		if(jwt==null)
 			{
@@ -196,7 +192,9 @@ public class Community
 			user.setData(this.dataUnknow);
 			return user;
 			}
-		try {			
+		try {						
+			return new JWT(jwt,this).getUser();
+			/*
 			String mail = (String)new JWT(jwt,this).getObject().get("mail");
 			if(mail==null)
 				{
@@ -204,12 +202,19 @@ public class Community
 				user.setData(this.dataUnknow);
 				return user;
 				}
-			return  getUser(mail);		
-			}
+			return  getUser(mail);*/		
+			}		
 		catch (InvalidJWT e) {
-			User user = new UnknowUser(this);
-				user.setData(this.dataUnknow);
-			return user;
+//			User user = new UnknowUser(this);
+//				user.setData(this.dataUnknow);
+//			return user;
+			throw e;
+			}
+		catch (Exception e) {
+//			User user = new UnknowUser(this);
+//				user.setData(this.dataUnknow);
+//			return user;
+			throw new InvalidJWT();
 			}
 		}
 	
@@ -223,4 +228,37 @@ public class Community
 		{
 		return Repositories.pending.findAll();
 		}
+	
+	/*NOTIFY*/
+	public Notify getNotify() {
+		return notify;
 	}
+	public void setNotify(Notify notify) {
+		this.notify = notify;
+	}
+	public void sendToMail(String title, String msg, Map payload,String ... mail) throws Exception{
+		List devices= new ArrayList();
+		for(String item:mail)
+			{
+			Set<Device> dvs = this.getUser(item).getDevices();
+			for(Device d:dvs)
+				devices.add(d.getId());
+			}
+			
+		
+		this.notify.send(title, msg,payload, (String[])devices.toArray(new String[0]));
+	}
+	public void send(String title, String msg, Map payload,String ... devices) throws Exception{		
+		this.notify.send(title, msg,payload, devices);
+	}
+	/*/NOTIFY*/
+	
+	public static void main(String[] args)throws Exception {
+		String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibWFzc2ltaWxpYW5vLnJlZ2lzQGdtYWlsLmNvbSIsInBzdyI6bnVsbCwiZmlyc3ROYW1lIjoiTWFzc2ltaWxpYW5vIiwibGFzdE5hbWUiOiJSZWdpcyIsImxhc3RhY2Nlc3N0aW1lIjpudWxsLCJzZW5kUmVnaXN0ZXJNYWlsIjpudWxsLCJiYWNrZ3JvdW5kIjpudWxsLCJhdmF0YXIiOiJodHRwOi8vOTUuMTEwLjIyOC4xNDA6ODA4MC9vcGVuQ29tbXVuaXR5L2NvbW11bml0eS9pbWFnZS9waWN0dXJlP3R5cGU9bGFyZ2UiLCJsb2d0cnkiOjAsInJlZ2lzdGVySWQiOm51bGwsInJvbGVzIjpbeyJpZCI6ImJhc2UudXNlciIsIm5hbWUiOiJ1c2VyIiwiY29tcGFueSI6ImJhc2UifV0sImp3dCI6bnVsbCwiY29tbXVuaXR5IjoiYmFzZSIsImRhdGEiOnt9fQ.0Mjb6G-nRlj4ylwBDWPTUnQSPprFd8e1HXQp8y6dG3k";
+		User user = new JWT(jwt, "37ea72d1-5c9e-4635-92c6-e732406aac21").getUser();
+		JWTResponse response = new JWTResponse(user,"base","37ea72d1-5c9e-4635-92c6-e732406aac21");
+		System.out.println(user.getFirstName());
+	}
+	}
+
+

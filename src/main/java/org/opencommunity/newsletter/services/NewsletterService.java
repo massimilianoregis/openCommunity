@@ -67,7 +67,7 @@ public class NewsletterService
 			}
 		}
 	@RequestMapping(value="/sendAll", method = RequestMethod.GET)
-	public @ResponseBody void sendTemplate(String template)
+	public @ResponseBody void sendTemplate(String template) throws Exception
 		{
 		List<Mail> tos = newsletter.getMailByTemplate(template);
 		System.out.println(tos.size());
