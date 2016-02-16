@@ -40,7 +40,7 @@ static public org.opencommunity.objs.User getUser()
 		if(usr instanceof org.opencommunity.objs.User) return (org.opencommunity.objs.User)usr;
 		if(usr instanceof String) return null;
 		}
-	String jwt = instance.request.getHeader("X-Requested-With");
+	String jwt = instance.request.getHeader("access-token");
 		
 	//if(jwt==null) return null;
 	try {		

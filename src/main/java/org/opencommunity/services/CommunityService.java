@@ -7,12 +7,12 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.opencommunity.exception.InvalidJWT;
 import org.opencommunity.exception.UserJustPresent;
 import org.opencommunity.exception.UserNotFound;
-import org.opencommunity.messages.MessageController;
 import org.opencommunity.objs.Community;
 import org.opencommunity.objs.Device;
 import org.opencommunity.objs.Envelope;
@@ -23,8 +23,14 @@ import org.opencommunity.objs.User;
 import org.opencommunity.persistence.CommunityRepository;
 import org.opencommunity.persistence.Repositories;
 import org.opencommunity.security.SilentSecured;
+import org.opencommunity.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.social.facebook.api.Facebook;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -57,16 +63,28 @@ public class CommunityService
 	@Autowired
 	private DataSource datasource;
 	
+	/**Immagini degli utenti**/
+	@RequestMapping(value="/image/{name:.+}",method=RequestMethod.GET)
+	public ResponseEntity<byte[]> getImage(@PathVariable String name,@RequestParam(required=false) Integer w,@RequestParam(required=false) Integer h) throws Exception
+		{
+		final HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.IMAGE_JPEG);
+
+	    return new ResponseEntity<byte[]>(IOUtils.toByteArray(Util.getInstance().getImage(name,w,h)), headers, HttpStatus.CREATED);
+		}
 		
 	static private ObjectMapper json = new ObjectMapper();
 	/*Notification*/
 	@RequestMapping(value="notify/{mail:.*}/send", method = RequestMethod.GET)
-	public @ResponseBody void sendUser(@PathVariable String mail,String title, String msg) throws Exception
+	public @ResponseBody void sendUser(@PathVariable String mail,@RequestParam(required=false) String title,@RequestParam(required=false) String from, String msg,String type) throws Exception
 		{						
-		community.getUser(mail).send(title, msg,null);		
+		Map map = new HashMap();
+			map.put("to",mail);
+			map.put("from",from);
+			map.put("type",type);
+			map.put("target","user");
+		community.getUser(mail).send(title, msg,map);		
 		}
-
-	
 	
 	@RequestMapping(value="notify/send", method = RequestMethod.POST)
 	public @ResponseBody void send(@RequestBody RequestSend send) throws Exception
@@ -143,7 +161,7 @@ public class CommunityService
 		usr.extend(user);
 			 
 	    usr.save();
-	    return new JWTResponse(usr,community);
+	    return new JWTResponse(usr,community);	    
 		}
 	//leggi lista utenti
 	@RequestMapping(value= "/user",method=RequestMethod.GET)
@@ -181,16 +199,26 @@ public class CommunityService
 		return new JWTResponse(community.getUser(mail),community);
 		}
 
-	
+	/**GESTIONE RUOLI**/
+	//@Secured("Admin")	
+	@RequestMapping(value="/{mail}/role/{role:.*}",method=RequestMethod.GET)
+	public @ResponseBody User list(@PathVariable String mail,@PathVariable String role) throws Exception
+		{	
+		User user = community.getUser(mail);
+		if(user.hasRole(role)) user.removeRole(role);
+		else user.addRole(Repositories.role.findOne(role));	
+		user.save();
+		return user;
+		}	
 	@RequestMapping(value="/role",method=RequestMethod.DELETE)
 	public @ResponseBody void removeRole(String role) throws Exception
 		{
 		Repositories.role.delete(role);
 		}	
 	@RequestMapping(value="/role",method=RequestMethod.POST)
-	public @ResponseBody void addRole(String role) throws Exception
+	public @ResponseBody void addRole(@RequestParam(required=false) String company,String role) throws Exception
 		{
-		community.addRole(role);		
+		community.addRole(company,role);		
 		}
 	@RequestMapping(value="/role",method=RequestMethod.GET)
 	public @ResponseBody List<Role> getRoles() throws Exception
@@ -232,14 +260,20 @@ public class CommunityService
 	
 	
 	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public @ResponseBody User loginPost(@RequestBody RequestLogin request) throws Exception,UserNotFound
+	public @ResponseBody Object loginPost(@RequestBody RequestLogin request) throws Exception,UserNotFound
 		{
 		return login(request.getMail(), request.getPsw());
 		}
 	
 	@RequestMapping("/login")	
-	public @ResponseBody User login(String mail, String psw) throws Exception,UserNotFound
-		{										
+	public @ResponseBody Object login(String mail, String psw) throws Exception,UserNotFound
+		{								
+		if(psw==null || psw.isEmpty()) 
+			{
+			community.getUser(mail).sendOTP();
+			return "{\"msg\":\"sent mail\"}";
+			}
+	
 		User user=  community.login(mail, psw);
 		System.out.println("logged:"+user);
 		return new JWTResponse(user,community);
@@ -247,8 +281,10 @@ public class CommunityService
 	
 	@RequestMapping("/login/uid")
 	public @ResponseBody User loginByUID(String uid) throws Exception
-		{						
+		{
+		try{community.confirmRegistration(uid);}catch(Exception e){}
 		User user = Repositories.user.findUserByUid(uid);
+		
 		System.out.println("logged:"+user);
 		return new JWTResponse(user,community);
 		}
@@ -259,12 +295,7 @@ public class CommunityService
 		community.logout();		
 		}	
 	
-	//@Secured("Admin")	
-	@RequestMapping(value="/{mail}/role",method=RequestMethod.GET)
-	public @ResponseBody void list(String mail,String role) throws Exception
-		{		
-		community.getUser(mail).addRole(Repositories.role.findOne(role));				
-		}
+
 	@RequestMapping("/me")
 	public @ResponseBody User me()
 		{						
@@ -287,7 +318,7 @@ public class CommunityService
 		}
 	
 	@RequestMapping(value="/user/{mail:.+}/extra", method = RequestMethod.POST)
-	public @ResponseBody void saveData(@PathVariable String mail,@RequestBody Map map) 
+	public @ResponseBody User saveData(@PathVariable String mail,@RequestBody Map map) 
 		{	
 		User user = this.community.getUser(mail);
 		Map data = user.getData();
@@ -297,6 +328,7 @@ public class CommunityService
 			
 		user.setData(data);
 		user.save();
+		return user;
 		}
 	
 	@RequestMapping(value="/jwt")
@@ -321,8 +353,8 @@ public class CommunityService
 	
 	  @ExceptionHandler(Exception.class)
 	  @ResponseBody
-	  public String handleException(Exception  exception) {
-	      return exception.getMessage();
+	  public Exception handleException(Exception  exception) {
+	      return exception;
 	  } 
 	
 	static public class RequestLogin
@@ -370,7 +402,7 @@ public class CommunityService
 			this.jwt=jwt;
 			this.community=community.getName();
 			setUser(user);			
-			setData(user.getData());	
+				
 			}
 		public JWTResponse(User user,Community community)
 			{
@@ -378,7 +410,7 @@ public class CommunityService
 			}
 		public JWTResponse(User user,String name,String secret)
 			{			
-			setUser(user);
+			setUser(user);			
 			this.community=name;
 			
 			try{Payload payload = new Payload(json.writeValueAsString(this));
@@ -387,8 +419,6 @@ public class CommunityService
 				JWSSigner signer = new MACSigner(secret.getBytes());
 				jwsObject.sign(signer);		
 				this.jwt=jwsObject.serialize();
-				
-			setData(user.getData());	
 				
 			}catch(Exception e){e.printStackTrace();}
 			}
@@ -399,7 +429,10 @@ public class CommunityService
 			setMail(user.getMail());
 			setRegisterId(user.getRegisterId());
 			setRoles(user.getRoles());			
-			try{setAvatar(user.getAvatar());}catch(Exception e){}			
+			setAddresses(user.getAddresses());
+			setData(user.getData());
+			try{setAvatar(user.getAvatar());}catch(Exception e){}
+			try{setBackground(user.getBackground());}catch(Exception e){}	
 			}
 		public String getCommunity() 
 			{

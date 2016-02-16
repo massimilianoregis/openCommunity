@@ -32,6 +32,8 @@ public class Community
 	private String root;	
 	@OneToOne(cascade=CascadeType.ALL) 
 	private Envelope welcome;
+	@OneToOne(cascade=CascadeType.ALL) 
+	private Envelope otp;
 	private String secretKey;
 	private String dataRegister;
 	private String dataUnknow;
@@ -56,11 +58,12 @@ public class Community
 		Community.instance=this;
 		}
 	
-	public Community(String name,String root, Envelope welcome,String secretKey, Notify notify)
+	public Community(String name,String root, Envelope welcome,Envelope otp,String secretKey, Notify notify)
 		{
 		Community.instance=this;
 		this.root=root;
 		this.welcome=welcome;
+		this.otp=otp;
 		this.name=name;
 		this.secretKey=secretKey;		
 		this.notify=notify;
@@ -127,6 +130,12 @@ public class Community
 		welcome.send(user.getMail(),user);		
 		}
 	
+	public void sendOTP(User user) throws Exception
+		{
+		System.out.println("send to:"+user.getMail()+" "+welcome);
+		if(otp!=null)	otp.send(user.getMail(),user);
+		if(otp==null)	welcome.send(user.getMail(),user);
+		}
 	
 	public void sendWelcomeMail(User user) throws Exception
 		{
@@ -147,10 +156,13 @@ public class Community
 	public Role getRole(String name)
 		{
 		return Repositories.role.findOne(new Role(name,this.name).getId());
-		}	
-	public void addRole(String name)
+		}
+	public void addRole(String name){
+		addRole(null,name);
+	}
+	public void addRole(String company,String name)
 		{
-		Repositories.role.save(new Role(name,this.name));
+		Repositories.role.save(new Role(company==null?name:company,this.name));
 		}
 	public List<Role> getRoles()
 		{		

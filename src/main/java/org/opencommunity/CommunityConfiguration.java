@@ -1,5 +1,8 @@
 package org.opencommunity;
 
+import java.io.IOException;
+import java.net.InetAddress;
+
 import org.opencommunity.notification.Notify;
 import org.opencommunity.objs.Community;
 import org.opencommunity.objs.Envelope;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.mail.javamail.JavaMailSender;
 
 
@@ -18,8 +23,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Configuration
 public class CommunityConfiguration 
 	{
-	@Value("${welcome.url}")	private String wUrl;
+	@Value("${welcome.url}")	private String wUrl;	
 	@Value("${welcome.from}")	private String from;
+	@Value("${otp.url}")	private String otpUrl;	
+	@Value("${otp.from}")	private String otpFrom;
 	@Value("${community.root}") private String basePath;
 	@Value("${smtp.url}") 		private String smtpUrl;
 	@Value("${smtp.port}") 		private int smtpPort;
@@ -45,6 +52,7 @@ public class CommunityConfiguration
 				"base",
 				basePath,
 				new Envelope(from,"welcome",wUrl,postman()),
+				new Envelope(otpFrom,"OTP",otpUrl,postman()),
 				secretKey,
 				notify
 				);		
@@ -84,5 +92,20 @@ public class CommunityConfiguration
 		
 		return result;
 		}
-
+	 @Bean
+     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException {
+         PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
+         propertySourcesPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(Boolean.TRUE);
+         try{
+         if(InetAddress.getLocalHost().getHostAddress().equals("95.110.228.140"))
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
+         else
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:local/*.properties"));
+         }catch(Exception e)
+         {
+        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
+         }
+         
+         return propertySourcesPlaceholderConfigurer;
+     }
 	}

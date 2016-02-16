@@ -19,6 +19,7 @@ import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 //@EnableJpaRepositories
 //@EnableAspectJAutoProxy
 //@EnableSpringConfigured
+
 public class CommunityApplication extends SpringBootServletInitializer 
 {
 	@Override

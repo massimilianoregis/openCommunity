@@ -54,6 +54,7 @@ public class User implements Serializable
 	private Date sendRegisterMail;
 	private String background;
 	private String avatar;
+	private String locale;
 	
 	@Transient
 	private Integer logtry=0;
@@ -73,7 +74,9 @@ public class User implements Serializable
 	@OneToMany(cascade = {CascadeType.ALL})
 	private Set<Device> devices = new HashSet<Device>();
 	
-	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(cascade = {CascadeType.ALL})
+	private Set<Address> addresses = new HashSet<Address>();
 	
 	public User()
 		{		
@@ -97,6 +100,7 @@ public class User implements Serializable
 	public void setRoles(Set<Role> roles) 			{this.roles = roles;}
 	public void setName(String fname, String sname)	{this.firstName=fname; this.lastName=sname;}
 	public void setUid(String uid) 					{this.uid = uid;}
+	public void setAddresses(Set<Address> addresses) {this.addresses = addresses;}
 	public boolean canAccess(String psw,Community cm)
 		{			
 		System.out.println(logtry+"-->"+cm.maxLoginTry()+"--"+psw);
@@ -134,6 +138,7 @@ public class User implements Serializable
 	public Set<Role> getRoles() 	{return roles;}
 	public String getRegisterId() 	{return registerId;}
 	public Integer getLogtry() 		{return logtry;}
+	public Set<Address> getAddresses() {return addresses;}
 	@JsonIgnore
 	public List<Log> getLogs()		
 		{
@@ -166,7 +171,12 @@ public class User implements Serializable
 		Community.getInstance().sendPasswordMail(this);
 		}
 
-	
+	public boolean hasRole(String role)
+		{
+		for(Role r : roles)
+			if(r.getId().equals(role)) return true;
+		return false;
+		}
 	public boolean canAccess(String role, String company)
 		{
 		for(Role r : roles)
@@ -183,7 +193,17 @@ public class User implements Serializable
 		addRole(Community.getInstance().getUserRole());
 		}
 	
-	
+	public void removeRole(String role)
+		{
+		for(Role r : roles)
+			{			
+			if(r.getId().equals(role)) 
+				{
+				this.roles.remove(r);
+				return;
+				}
+			}
+		}
 	public void addRole(Role role)
 		{
 		if(role==null) return;
@@ -208,7 +228,10 @@ public class User implements Serializable
 		{				
 		Repositories.user.save(this);		
 		}
-	
+	public void sendOTP() throws Exception
+		{
+		Community.getInstance().sendOTP(this);				
+		}
 	
 	public void sendWelcome() throws Exception
 		{
@@ -270,6 +293,12 @@ public class User implements Serializable
 		try{this.background = Util.getInstance().saveImage(background);}catch(Exception e){}
 		
 	}
+	public String getLocale() {
+		return locale;
+	}
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
 	
 //	public void setJsondata(String jsondata) throws Exception 
 //		{
@@ -311,8 +340,9 @@ public class User implements Serializable
 		{
 		this.firstName	=	user.firstName;
 		this.lastName	=	user.lastName;
-		this.background	=	user.background;
-		this.avatar		=	user.avatar;
+		try{this.setBackground(user.background);}catch(Exception e){}
+		try{this.setAvatar(user.avatar);}catch(Exception e){}
+		this.setAddresses(user.getAddresses());
 		
 		if(user.jsondata!=null)	this.jsondata=user.jsondata;
 		if(user.psw!=null)		this.psw=user.psw;		

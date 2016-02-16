@@ -1,10 +1,19 @@
 package org.opencommunity.social;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.FacebookLink;
 import org.springframework.social.facebook.api.PagedList;
 import org.springframework.social.facebook.api.Post;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
@@ -16,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-//@Controller
+@Controller
 @RequestMapping("/community/facebook")
 public class FacebookController {
 	
@@ -27,12 +36,20 @@ public class FacebookController {
         this.facebook = facebook;
         
     }
+    @RequestMapping("/publish")
+    public @ResponseBody String post(String msg,String img) throws Exception
+    	{    	
+    	
+    	return facebook.pageOperations().postPhoto("603116799778109",msg,new UrlResource(img));    	
+    	}
     @RequestMapping("/friends")
     public @ResponseBody PagedList<Post> friends()
     	{
+    	
+    	//return facebook.pageOperations().post(arg0, arg1)
     	return facebook.feedOperations().getHomeFeed();
     	}
-    @RequestMapping(method=RequestMethod.GET)
+    @RequestMapping("/")
     public String helloFacebook(Model model) {
         if (!facebook.isAuthorized()) {
             return "redirect:/connect/facebook";
@@ -44,7 +61,7 @@ public class FacebookController {
         model.addAttribute("feed", homeFeed);
 
         //return "hello";
-        return "redirect:/login.html";
+        return "redirect:/connect/hello";
     }
 
 }

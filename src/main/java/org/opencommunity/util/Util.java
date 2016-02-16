@@ -1,5 +1,9 @@
 package org.opencommunity.util;
 
+import static org.imgscalr.Scalr.OP_ANTIALIAS;
+import static org.imgscalr.Scalr.crop;
+import static org.imgscalr.Scalr.resize;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -12,10 +16,11 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import static org.imgscalr.Scalr.*;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import com.sun.mail.util.BASE64DecoderStream;
@@ -25,7 +30,6 @@ import com.sun.mail.util.BASE64DecoderStream;
 public class Util {
 	@Value("${community.img.root}") private String root;
 	@Value("${community.img.url}") private String url;
-	
 	
 	static private Util instance;
 	static public Util getInstance()
@@ -60,22 +64,35 @@ public class Util {
 		if(w==null && h==null) return new FileInputStream(new File(root,img));
 		
 		File rootImage = new File(root);
-		String imgtype="jpg";
-		String newImage = img+(w!=null?w:"_")+"X"+(h!=null?h:"_");
+		String imgtype="jpg";		
+		try{imgtype=img.substring(img.lastIndexOf('.')+1);}catch(Exception e){}
+		try{img = img.substring(0,img.lastIndexOf('.'));}catch(Exception e){}
+		String newImage = img+"-"+(w!=null?w:"_")+"X"+(h!=null?h:"_");
 		File imgOutFile = new File(rootImage,newImage+"."+imgtype);
 		if(imgOutFile.exists()) return new FileInputStream(imgOutFile);
 			
-		BufferedImage image = ImageIO.read(new File(root,img));
+		BufferedImage image = ImageIO.read(new File(root,img+"."+imgtype));		
 		Integer nh = image.getHeight();
-		Integer nw = image.getWidth();		
+		Integer nw = image.getWidth();
+		float ratio = nw/(float)nh;	
 		
-		if( ((h!=null && nh==h)||h==null) && ((w!=null && nw==w)||w==null))
+		if("png".equals(imgtype))
+			{		
+			BufferedImage imageRGB = new BufferedImage(nw,nh, BufferedImage.TYPE_INT_RGB);
+				imageRGB.createGraphics().drawImage(image,null,null);
+			image=imageRGB;
+			imgtype="jpg";
+			}
+		
+		if(((h!=null && nh==h)||h==null) && ((w!=null && nw==w)||w==null))
 			{
 			ImageIO.write(image, imgtype, imgOutFile);
 			return new FileInputStream(imgOutFile);
-			}
-		float ratio = nw/(float)nh;		
+			}		
 		Mode mode = Mode.FIT_TO_WIDTH;		
+				
+		if(h==null && w!=null) h= (int)(w/ratio);
+		if(h!=null && w==null) w= (int)(h*ratio);
 		
 		Integer w1 = w;
 		Integer h1 = (int)(w/ratio);
@@ -88,7 +105,7 @@ public class Util {
 		
 		BufferedImage resize = resize(image,  Method.BALANCED, mode,w!=null?w:0,h!=null?h:0,OP_ANTIALIAS);		
 		if(w!=null && h!=null)  resize= crop(resize,(resize.getWidth()-w)/2,(resize.getHeight()-h)/2,w,h);
-		
+
 		ImageIO.write(resize, imgtype, imgOutFile);	
 		return new FileInputStream(imgOutFile);
 		}
@@ -100,7 +117,7 @@ public class Util {
 			int pos = img.indexOf(",");
 			String prefix = img.substring(0,pos);
 			String data = img.substring(pos+1);			
-			String imgtype=prefix.substring(prefix.indexOf("/")+1,prefix.indexOf(";"));
+			String imgtype=prefix.substring(prefix.indexOf("/")+1,prefix.indexOf(";"));			
 			
 		    byte[] imgBytes = BASE64DecoderStream.decode(data.getBytes());		    
 		    BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imgBytes));
@@ -112,41 +129,41 @@ public class Util {
 		    		    
 		    return url+imgOutFile.getName();
 			}
-		if(!img.matches(url))
+		if(!img.matches(url+".*"))
 			try{					
-			System.out.println("download:"+img);			
-			URL ur = new URL(img);
-			InputStream in = ur.openStream();
-			
-			if(name==null)								
-				name = UUID.randomUUID().toString()+".jpg";				
+				System.out.println("download:"+img);			
+				URL ur = new URL(img);
+				InputStream in = ur.openStream();
 				
-			//String imgtype = name.split("\\.")[1];
-			
-			File imgOutFile = new File(rootImage,name);
-				imgOutFile.getParentFile().mkdirs();
-				imgOutFile.createNewFile();
-			FileOutputStream out = new FileOutputStream(imgOutFile);
-			int size = IOUtils.copy(in, out);
-			
-			System.out.println("...download:"+url+imgOutFile.getName());
-			if(size==0)
-				{
-				imgOutFile.delete();
-				return img;
-				}
-			return url+imgOutFile.getName();
+				if(name==null)								
+					name = UUID.randomUUID().toString()+".jpg";				
+					
+				//String imgtype = name.split("\\.")[1];
+				
+				File imgOutFile = new File(rootImage,name);
+					imgOutFile.getParentFile().mkdirs();
+					imgOutFile.createNewFile();
+				FileOutputStream out = new FileOutputStream(imgOutFile);
+				int size = IOUtils.copy(in, out);
+				
+				System.out.println("...download:"+url+imgOutFile.getName());
+				if(size==0)
+					{
+					imgOutFile.delete();
+					return img;
+					}
+				return url+imgOutFile.getName();				
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		return img;
 		}
-	
+
 	public static void main(String[] args)throws Exception {
 		Util util = new Util("/Users/max/Downloads","http://");
-		//String path = util.saveImage("/Users/max/Downloads/14010_Druckbogen_Muppets_RocknRoll_m.jpg",null);
-		//System.out.println(path);
-		System.out.println(util.saveImage("http://graph.facebook.com/517267866/picture?type=large"));
+		InputStream in = util.getImage("e250f807-3190-4e08-9a3d-152d0d0c4c8d.png",1080,750);
+		IOUtils.copy(in, new FileOutputStream("/Users/max/Downloads/test.png"));
+		//System.out.println(util.getImage("a0c38026-6d65-4894-a5c7-a6b8bfc653df.png",800,null));
 		
 	}
 }

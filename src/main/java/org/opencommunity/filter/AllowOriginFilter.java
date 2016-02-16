@@ -1,4 +1,4 @@
- 	package org.opencommunity.filter;
+package org.opencommunity.filter;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class AllowOriginFilter implements Filter {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 		response.setHeader("Access-Control-Max-Age", "3600");
-		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, access-token");
 		
 		System.out.println("Community>"+((HttpServletRequest)req).getRequestURI()+"<");
 		//SessionData.setSession(((HttpServletRequest)req).getSession(true));

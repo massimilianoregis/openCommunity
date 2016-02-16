@@ -50,24 +50,7 @@ public class RepositoryConfig {
 	@Value("${community.db.create.url}") private String createUrl;
 	@Value("${community.db.create.cmd}") private String createCmd;
 
-	
-	 @Bean
-     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException {
-         PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
-         propertySourcesPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(Boolean.TRUE);
-         try{
-         if(InetAddress.getLocalHost().getHostAddress().equals("95.110.228.140"))
-        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
-         else
-        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:local/*.properties"));
-         }catch(Exception e)
-         {
-        	 propertySourcesPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:online/*.properties"));
-         }
-         
-         return propertySourcesPlaceholderConfigurer;
-     }
-	
+
 	public DataSource dataSource() {
 		  	//System.out.println("datasource:"+servletContext.getRealPath("WEB-INF/data"));		
 		datasource = new DriverManagerDataSource();
