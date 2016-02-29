@@ -30,10 +30,8 @@ public class Community
 	@Id			
 	private String name;
 	private String root;	
-	@OneToOne(cascade=CascadeType.ALL) 
-	private Envelope welcome;
-	@OneToOne(cascade=CascadeType.ALL) 
-	private Envelope otp;
+	@OneToOne(cascade=CascadeType.ALL) private Envelope welcome;
+	@OneToOne(cascade=CascadeType.ALL) private Envelope otp;
 	private String secretKey;
 	private String dataRegister;
 	private String dataUnknow;
@@ -164,6 +162,10 @@ public class Community
 		{
 		Repositories.role.save(new Role(company==null?name:company,this.name));
 		}
+	public List<User> getUserFromRole(String role)
+		{
+		return Repositories.user.findUserByRolesId(role);
+		}
 	public List<Role> getRoles()
 		{		
 		return Repositories.role.findAll();
@@ -251,17 +253,17 @@ public class Community
 	public void sendToMail(String title, String msg, Map payload,String ... mail) throws Exception{
 		List devices= new ArrayList();
 		for(String item:mail)
-			{
+			try{
 			Set<Device> dvs = this.getUser(item).getDevices();
 			for(Device d:dvs)
 				devices.add(d.getId());
-			}
+			}catch(Exception e){}
 			
-		
+		if(devices.size()>0)
 		this.notify.send(title, msg,payload, (String[])devices.toArray(new String[0]));
 	}
-	public void send(String title, String msg, Map payload,String ... devices) throws Exception{		
-		this.notify.send(title, msg,payload, devices);
+	public Object send(String title, String msg, Map payload,String ... devices) throws Exception{		
+		return this.notify.send(title, msg,payload, devices);
 	}
 	/*/NOTIFY*/
 	

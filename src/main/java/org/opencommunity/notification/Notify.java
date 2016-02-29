@@ -2,7 +2,6 @@ package org.opencommunity.notification;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Entity;
@@ -30,7 +29,7 @@ public class Notify  {
 		this.app=app;
 		this.privateKey=privateKey;
 		}
-	public void send(String title, String text,Map payload, String ... to) throws Exception{
+	public Object send(String title, String text,Map payload, String ... to) throws Exception{
 		
 		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 //		Proxy proxy= new Proxy(Type.HTTP, new InetSocketAddress("bcprx.gbm.lan", 8080));
@@ -53,7 +52,7 @@ public class Notify  {
 		message.getNotification().getIos().setPayload(payload);
 		message.getNotification().getAndroid().setPayload(payload);
 		HttpEntity<String> requestEntity = new HttpEntity<String>(new ObjectMapper().writeValueAsString(message),headers);
-		template.postForLocation("https://push.ionic.io/api/v1/push",requestEntity);
+		return template.postForObject("https://push.ionic.io/api/v1/push",requestEntity,String.class);
 		
 		}
 	

@@ -3,11 +3,7 @@ package org.opencommunity.util;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 public class Client<A> {

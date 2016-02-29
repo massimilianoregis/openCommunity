@@ -3,7 +3,6 @@ package org.opencommunity.persistence;
 import java.util.List;
 
 import org.opencommunity.objs.Application;
-import org.opencommunity.objs.User;
 import org.springframework.data.repository.Repository;
 
 

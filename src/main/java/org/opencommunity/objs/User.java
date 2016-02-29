@@ -54,10 +54,10 @@ public class User implements Serializable
 	private Date sendRegisterMail;
 	private String background;
 	private String avatar;
-	private String locale;
+	private String locale;	
 	
 	@Transient
-	private Integer logtry=0;
+	private Integer logtry=0;	
 	
 	//private List<String> tags;
 	@Transient
@@ -324,12 +324,12 @@ public class User implements Serializable
 	public void setDevices(Set<Device> devices) {
 		this.devices = devices;
 	}
-	public void send(String title, String msg, Map from)	throws Exception{
+	public Object send(String title, String msg, Map from)	throws Exception{
 		List<String> list = new Vector<String>();
 		for(Device dev:devices)
 			list.add(dev.getId());
 		
-		Community.getInstance().send(title, msg,from,list.toArray(new String[0]));
+		return Community.getInstance().send(title, msg,from,list.toArray(new String[0]));
 		}
 	/*/DISPOSITIVI*/
 	

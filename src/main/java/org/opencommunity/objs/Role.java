@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.springframework.beans.factory.annotation.Configurable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -26,6 +24,9 @@ public class Role implements Serializable{
 	public Role(String role)
 		{
 		this.id=role;
+		String[] pair = role.split("\\.");
+		company=pair[0];
+		name=pair[1];
 		}
 	public Role(String role, String company)
 		{

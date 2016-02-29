@@ -15,5 +15,6 @@ public interface UserRepository extends Repository<User, String>
 	public boolean exists(String entity);
 	public List<User> findDistinctUserByRolesCompany(String name);	
 	public User findUserByUid(String uid);
-	public User findUserByMail(String uid);
+	public User findUserByMail(String mail);
+	public List<User> findUserByRolesId(String uid);
 }

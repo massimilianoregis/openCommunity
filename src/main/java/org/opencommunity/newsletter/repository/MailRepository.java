@@ -3,7 +3,6 @@ package org.opencommunity.newsletter.repository;
 import java.util.List;
 
 import org.opencommunity.newsletter.Mail;
-import org.opencommunity.objs.User;
 import org.springframework.data.repository.Repository;
 
 

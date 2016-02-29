@@ -3,7 +3,6 @@ package org.opencommunity.persistence;
 import java.util.List;
 
 import org.opencommunity.objs.Role;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 public interface RoleRepository extends Repository<Role, String> 

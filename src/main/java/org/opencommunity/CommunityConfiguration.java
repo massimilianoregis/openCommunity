@@ -21,12 +21,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 //@PropertySource({"community.properties"})
 @Configuration
-public class CommunityConfiguration 
-	{
+public class CommunityConfiguration {
+	
+	 
 	@Value("${welcome.url}")	private String wUrl;	
 	@Value("${welcome.from}")	private String from;
-	@Value("${otp.url}")	private String otpUrl;	
-	@Value("${otp.from}")	private String otpFrom;
+	@Value("${welcome.subject}")private String subject;
+	@Value("${otp.url}")		private String otpUrl;	
+	@Value("${otp.from}")		private String otpFrom;
+	@Value("${otp.subject}")	private String otpSubject;
 	@Value("${community.root}") private String basePath;
 	@Value("${smtp.url}") 		private String smtpUrl;
 	@Value("${smtp.port}") 		private int smtpPort;
@@ -51,8 +54,8 @@ public class CommunityConfiguration
 		community =  new Community(
 				"base",
 				basePath,
-				new Envelope(from,"welcome",wUrl,postman()),
-				new Envelope(otpFrom,"OTP",otpUrl,postman()),
+				new Envelope(from,subject,wUrl,postman()),
+				new Envelope(otpFrom,otpSubject,otpUrl,postman()),
 				secretKey,
 				notify
 				);		

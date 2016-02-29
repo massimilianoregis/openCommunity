@@ -11,7 +11,6 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Entity
 public class Balance {

@@ -30,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
-import org.springframework.social.facebook.api.Facebook;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -76,14 +75,14 @@ public class CommunityService
 	static private ObjectMapper json = new ObjectMapper();
 	/*Notification*/
 	@RequestMapping(value="notify/{mail:.*}/send", method = RequestMethod.GET)
-	public @ResponseBody void sendUser(@PathVariable String mail,@RequestParam(required=false) String title,@RequestParam(required=false) String from, String msg,String type) throws Exception
+	public @ResponseBody Object sendUser(@PathVariable String mail,@RequestParam(required=false) String title,@RequestParam(required=false) String from, String msg,String type) throws Exception
 		{						
 		Map map = new HashMap();
 			map.put("to",mail);
 			map.put("from",from);
 			map.put("type",type);
 			map.put("target","user");
-		community.getUser(mail).send(title, msg,map);		
+		return community.getUser(mail).send(title, msg,map);		
 		}
 	
 	@RequestMapping(value="notify/send", method = RequestMethod.POST)
@@ -93,6 +92,13 @@ public class CommunityService
 			community.send(send.getTitle(), send.getText(),send.getPayload(),send.getDevices());
 		if(send.getMail()!=null)
 			community.sendToMail(send.getTitle(), send.getText(),send.getPayload(),send.getMail());
+		}
+	@RequestMapping("/notify/{mail:.*}/removeDevice")
+	public @ResponseBody void removeDevice(@PathVariable String mail) throws Exception
+		{		
+		User user =community.getUser(mail); 
+			user.getDevices().clear();
+			user.save();
 		}
 	@RequestMapping("/notify/{mail:.*}/addDevice")
 	public @ResponseBody void addDevice(@PathVariable String mail,String type, String id) throws Exception
@@ -201,12 +207,42 @@ public class CommunityService
 
 	/**GESTIONE RUOLI**/
 	//@Secured("Admin")	
-	@RequestMapping(value="/{mail}/role/{role:.*}",method=RequestMethod.GET)
+	@RequestMapping(value="/{mail}/role/{role:.+}",method=RequestMethod.GET)
 	public @ResponseBody User list(@PathVariable String mail,@PathVariable String role) throws Exception
 		{	
+		Role r=Repositories.role.findOne(role);		
+		if(r==null)
+			{
+			r = new Role(role);
+			Repositories.role.save(r);
+			}
+			
 		User user = community.getUser(mail);
 		if(user.hasRole(role)) user.removeRole(role);
-		else user.addRole(Repositories.role.findOne(role));	
+		else user.addRole(r);	
+		user.save();
+		return user;
+		}	
+	@RequestMapping(value="/{mail}/delrole/{role:.+}",method=RequestMethod.GET)
+	public @ResponseBody User removeUserRole(@PathVariable String mail,@PathVariable String role) throws Exception
+		{						
+		User user = community.getUser(mail);
+		user.removeRole(role);		
+		user.save();
+		return user;
+		}
+	@RequestMapping(value="/{mail}/addrole/{role:.+}",method=RequestMethod.GET)
+	public @ResponseBody User addUserRole(@PathVariable String mail,@PathVariable String role) throws Exception
+		{	
+		Role r=Repositories.role.findOne(role);		
+		if(r==null)
+			{
+			r = new Role(role);
+			Repositories.role.save(r);
+			}
+			
+		User user = community.getUser(mail);
+		user.addRole(r);	
 		user.save();
 		return user;
 		}	
@@ -225,6 +261,12 @@ public class CommunityService
 		{
 		return community.getRoles();
 		}	
+	@RequestMapping(value="/role/{role:.+}",method=RequestMethod.GET)
+	public @ResponseBody List<User> getUserRole(@PathVariable String role) throws Exception
+		{
+		System.out.println(role);
+		return community.getUserFromRole(role);
+		}
 
 
 
@@ -339,9 +381,9 @@ public class CommunityService
 		}
 	
 	@RequestMapping(value="/sendMail")
-	public @ResponseBody void send(String to) throws Exception
+	public @ResponseBody void send(@RequestBody RequestSendMail req ) throws Exception
 		{			
-		new Envelope("max@ekaros.it","test mail","http://95.110.228.140:8080/openCommunity/welcome.mail").send(to, new HashMap());
+		new Envelope(req.getFrom(),req.getSubject(),req.getTemplate()).send(req.getTo(), req.getData());
 		}
 	
 	@SilentSecured("admin")		
@@ -356,7 +398,25 @@ public class CommunityService
 	  public Exception handleException(Exception  exception) {
 	      return exception;
 	  } 
-	
+
+	static public class RequestSendMail
+		{
+		String from;
+		String to;
+		String subject;
+		String template;			
+		Map data;
+		public String getFrom() 					{return from;}
+		public void setFrom(String from) 			{this.from = from;}
+		public String getTo() 						{return to;}
+		public void setTo(String to) 				{this.to = to;}
+		public String getSubject() 					{return subject;}
+		public void setSubject(String subject) 		{this.subject = subject;}
+		public String getTemplate() 				{return template;}
+		public void setTemplate(String template) 	{this.template = template;}
+		public Map getData() 						{return data;}
+		public void setData(Map data) 				{this.data = data;}		
+		}
 	static public class RequestLogin
 		{
 		private String mail;
@@ -489,5 +549,7 @@ public class CommunityService
 			this.payload = payload;
 		}
 		}
+	
+	
 	}
 
